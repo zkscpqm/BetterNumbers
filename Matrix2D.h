@@ -17,11 +17,13 @@ class Matrix2D
 public:
 
 	// Constructors
-	Matrix2D(vector<double> data, int rows, int cols);
+	Matrix2D(vector<double> data, unsigned short rows, unsigned short cols);
 	Matrix2D(vector<vector<double>> data);
-	Matrix2D zeros(int rows, int cols);
-	Matrix2D identity(int _l);
-	Matrix2D diagonal(vector<double> _diag);
+
+	static Matrix2D zeros(unsigned short rows, unsigned short cols);
+	static Matrix2D identity(unsigned short _l);
+	static Matrix2D diagonal(vector<double> _diag);
+
 	~Matrix2D();
 
 	// Operations
@@ -31,12 +33,21 @@ public:
 	Matrix2D operator*(double&);
 	Matrix2D transpose();
 
-	// Checks
-
-	bool areValidParams(vector<double> data, int rows, int cols);
 
 private:
-	int __rows;
-	int __cols;
+	unsigned short __rows;
+	unsigned short __cols;
 	vector<double> __data;
+
+
+
+	// Checks
+
+	static bool areValidParams(vector<double> data, unsigned short rows, unsigned short cols);
+	static bool areValidParams(vector<vector<double>> data);
+
+	// Helpers
+
+	void expandNestedVector(vector<vector<double>> data);
+
 };
