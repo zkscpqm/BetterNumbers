@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef BETTERNUMBERS_EXPORTS
+#define BETTERNUMBERS_API __declspec(dllexport)
+#else
+#define BETTERNUMBERS_API __declspec(dllimport)
+#endif
+
 #include <vector>
 #include <tuple>
 

@@ -1,7 +1,7 @@
 #include <exception>
 #include <vector>
 #include <tuple>
-#include <format>
+#include <sstream>
 
 
 using std::vector;
@@ -24,7 +24,10 @@ public:
     {}
 
     virtual const char* what() const throw() {
-        return std::format("Parameters don't match:\n{} data len, {} rows, {} cols\nRows * Cols should equal the data length";
+        std::stringstream exception_message;
+        exception_message << "Parameters don't match:\n" << __data << " data len | " << __rows << " rows | " << __cols << " cols\nRows * Cols should equal the data length";
+        return exception_message.str().c_str();
+;
     }
 
 
