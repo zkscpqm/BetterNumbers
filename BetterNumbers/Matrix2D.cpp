@@ -81,6 +81,15 @@ unsigned short Matrix2D::cols() {
 	return __cols;
 }
 
+vector<double>* Matrix2D::getData() {
+	return &__data;
+}
+
+vector<double> Matrix2D::copyData() {
+	vector<double> data = __data;
+	return data;
+}
+
 std::tuple<unsigned short, unsigned short> Matrix2D::shape() {
 	return {__rows, __cols};
 }

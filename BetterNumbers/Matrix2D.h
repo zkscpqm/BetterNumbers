@@ -30,6 +30,8 @@ public:
 	unsigned short size(); // Number of elements
 	unsigned short cols(); // Number of columns
 	unsigned short rows(); // Number of rows
+	std::vector<double>* getData();
+	std::vector<double> copyData();
 	std::tuple<unsigned short, unsigned short> shape(); // tuple (num rows, num cols)
 	bool isSquare(); // Whether the number of rows is the same as the number of columns
 	bool isDiagonal(); // Whether everything except the diagonal starting in upper left corner is all 0.0
