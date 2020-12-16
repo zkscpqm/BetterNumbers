@@ -1,6 +1,7 @@
-#include "pch.h"
-#include "../BetterNumbers/Matrix2D.h"
 #include <vector>
+#include "..\BetterNumbers\BetterNumbers.h"
+#include "gtest/gtest.h"
+
 
 TEST(MatrixTest, BasicInit) {
 	std::vector<double> data = { 1, 2, 3, 4, 5, 6 };
