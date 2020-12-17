@@ -2,20 +2,21 @@
 #include <limits.h>
 #include "Matrix2D.h"
 #include "Exceptions.cpp"
+#include "coroutine"
 
 static unsigned long long previous_;
 static unsigned long long current_;
 static unsigned index_;
 
-
 // CONSTRUCTORS
 
-Matrix2D::Matrix2D(std::vector<double> *data, unsigned short rows, unsigned short cols) {
+Matrix2D::Matrix2D(vector *data, unsigned short rows, unsigned short cols) {
 
 	if (areValidParams(data, rows, cols)) {
 		__rows = rows;
 		__cols = cols;
 		__data = *data;
+
 	}
 	else {
 		throw matrixInitializationException(*data, rows, cols);
@@ -23,12 +24,11 @@ Matrix2D::Matrix2D(std::vector<double> *data, unsigned short rows, unsigned shor
 
 }
 
-Matrix2D::Matrix2D(std::vector<std::vector<double>> *data) {
+Matrix2D::Matrix2D(nvector *data) {
 
 	if (areValidParams(data)) {
 		expandNestedVector(*data);
 		__rows = (*data).size();
-		delete(&data);
 	}
 	else {
 		throw matrixInitializationException(*data);
@@ -36,17 +36,17 @@ Matrix2D::Matrix2D(std::vector<std::vector<double>> *data) {
 }
 
 Matrix2D Matrix2D::zeros(unsigned short rows, unsigned short cols) {
-	std::vector<double> __d(rows * cols, 0.0);
+	vector __d(rows * cols, 0.0);
 	return Matrix2D(&__d, rows, cols);
 }
 
 Matrix2D Matrix2D::identity(unsigned short _l) {
-	std::vector<double> tmpvec(_l, 1.);
+	vector tmpvec(_l, 1.);
 	return diagonal(tmpvec);
 }
 
-Matrix2D Matrix2D::diagonal(std::vector<double> _diag) {
-	std::vector<double> data;
+Matrix2D Matrix2D::diagonal(vector _diag) {
+	vector data;
 	unsigned short _l = _diag.size();
 	unsigned short arr_size =  _l * _l;
 	data.reserve(arr_size);
@@ -68,22 +68,32 @@ Matrix2D Matrix2D::diagonal(std::vector<double> _diag) {
 // PROPERTIES
 
 unsigned short Matrix2D::size() {
+
 	return __data.size();
 }
 
-unsigned short Matrix2D::rows() {
+unsigned short Matrix2D::numRows() {
 	return __rows;
 }
 
-unsigned short Matrix2D::cols() {
+unsigned short Matrix2D::numCols() {
 	return __cols;
 }
 
-std::vector<double>* Matrix2D::getData() {
+vector* Matrix2D::getData() {
 	return &__data;
 }
 
-std::vector<double> Matrix2D::copyData() {
+nvector Matrix2D::getNestedData() {
+	nvector data;
+	data.reserve(numRows());
+	for (unsigned i = 0; i < numRows(); i++) {
+		data.emplace_back(getRealRow(i));
+	}
+	return data;
+}
+
+vector Matrix2D::copyData() {
 	std::vector<double> data = __data;
 	return data;
 }
@@ -200,15 +210,15 @@ double Matrix2D::realValueAt(unsigned short row_index, unsigned short column_ind
 	throw matrixOutOfRange(*this, row_index, column_index);
 }
 
-std::vector<double> Matrix2D::getRow(unsigned short row_number) {
+vector Matrix2D::getRow(unsigned short row_number) {
 	return getRealRow(row_number - 1);
 }
 
-std::vector<double> Matrix2D::getRealRow(unsigned short row_index) {
+vector Matrix2D::getRealRow(unsigned short row_index) {
 	if (0 <= row_index < __rows - 1) {
 		unsigned short idx = row_index * __cols;
 		unsigned short end_idx = idx + __cols;
-		std::vector<double> row;
+		vector row;
 		row.reserve(__cols);
 		for (; idx < end_idx; idx++) {
 			row.emplace_back(__data[idx]);
@@ -220,14 +230,14 @@ std::vector<double> Matrix2D::getRealRow(unsigned short row_index) {
 	}
 }
 
-std::vector<double> Matrix2D::getColumn(unsigned short column_number) {
+vector Matrix2D::getColumn(unsigned short column_number) {
 	return getRealColumn(column_number - 1);
 
 }
 
-std::vector<double> Matrix2D::getRealColumn(unsigned short column_idx) {
+vector Matrix2D::getRealColumn(unsigned short column_idx) {
 	if (0 <= column_idx < __cols - 1) {
-		std::vector<double> col;
+		vector col;
 		col.reserve(__rows);
 		for (unsigned short i = column_idx; i < size(); i += __cols) {
 			col.emplace_back(__data[i]);
@@ -241,13 +251,13 @@ std::vector<double> Matrix2D::getRealColumn(unsigned short column_idx) {
 
 // CHECKS
 
-bool Matrix2D::areValidParams(std::vector<double> *data, unsigned short rows, unsigned short cols) {
+bool Matrix2D::areValidParams(vector* data, unsigned short rows, unsigned short cols) {
 	return (rows > 0) && (cols > 0) && ((*data).size() == rows * cols);
 }
 
-bool Matrix2D::areValidParams(std::vector<std::vector<double>> *data) {
+bool Matrix2D::areValidParams(nvector *data) {
 	int __colSize = (*data).at(0).size();
-	for (std::vector<double> col : (*data)) {
+	for (vector col : (*data)) {
 		if (col.size() != __colSize) {
 			return false;
 		}
@@ -266,14 +276,12 @@ bool Matrix2D::isValidReshape(unsigned short rows, unsigned short columns) {
 
 // HELPERS
 
-void Matrix2D::expandNestedVector(std::vector<std::vector<double>> &data) {
+void Matrix2D::expandNestedVector(nvector &data) {
 	__cols = data.at(0).size();
 	__data.reserve(data.size() * __cols);
-	for (std::vector<double> row : data) {
+	for (vector row : data) {
 		__data.insert(__data.end(), row.begin(), row.end());
 	}
 }
 
-Matrix2D::~Matrix2D() {
-	delete &__data;
-}
+Matrix2D::~Matrix2D() {}
