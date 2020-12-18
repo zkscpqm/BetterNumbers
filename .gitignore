@@ -2,3 +2,7 @@
 **/x64/
 **/packages/
 *.user
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
