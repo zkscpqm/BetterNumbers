@@ -35,6 +35,10 @@ Matrix2D::Matrix2D(nvector *data) {
 	}
 }
 
+Matrix2D Matrix2D::zeros(unsigned short _l) {
+	return zeros(_l, _l);
+}
+
 Matrix2D Matrix2D::zeros(unsigned short rows, unsigned short cols) {
 	vector __d(rows * cols, 0.0);
 	return Matrix2D(&__d, rows, cols);
@@ -45,7 +49,7 @@ Matrix2D Matrix2D::identity(unsigned short _l) {
 	return diagonal(tmpvec);
 }
 
-Matrix2D Matrix2D::diagonal(vector _diag) {
+Matrix2D Matrix2D::diagonal(vector& _diag) {
 	vector data;
 	unsigned short _l = _diag.size();
 	unsigned short arr_size =  _l * _l;

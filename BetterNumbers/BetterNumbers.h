@@ -2,4 +2,5 @@
 
 // For use by applications
 
-#include "src/Matrix2D.h"
+#include "src/linalg/Matrix2D.h"
+

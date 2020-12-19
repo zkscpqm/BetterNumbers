@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "../Core.h"
 #include <vector>
 #include <tuple>
 
@@ -19,8 +19,9 @@ public:
 	Matrix2D(nvector* data);
 
 	static Matrix2D zeros(unsigned short rows, unsigned short cols); // Create a rows * cols matrix of all 0.0 values
+	static Matrix2D zeros(unsigned short _l); // Create a square _l * _l matrix of all 0.0 values
 	static Matrix2D identity(unsigned short _l); // Creates a 0.0 square matrix with the diagonal starting is upper left corner being all 1.0
-	static Matrix2D diagonal(vector _diag); // Creates a square diagonal matrix with the provided vector being the diagonal
+	static Matrix2D diagonal(vector& _diag); // Creates a square diagonal matrix with the provided vector being the diagonal
 	static Matrix2D diagonal(vector _diag, unsigned short _l, bool tall); // Creates a long or tall diagonal matrix 
 
 	~Matrix2D();
