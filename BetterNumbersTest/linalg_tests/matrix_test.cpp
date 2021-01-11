@@ -22,7 +22,7 @@ TEST(MatrixTest, NestedInit) {
 		{ 1., 2., 3., 4., 5., 6. }
 	};
 
-	Matrix2D mx = Matrix2D(&data);
+	Matrix2D mx = Matrix2D(&data); // FIX FAIL
 	ASSERT_EQ(data.size(), mx.numRows());
 	ASSERT_EQ(data.at(0).size(), mx.numCols());
 	ASSERT_EQ(data, mx.getNestedData());
@@ -138,4 +138,18 @@ TEST(MatrixTest, ValueGetters) {
 	Matrix2D mx = Matrix2D(&_data, 2, 4);
 	ASSERT_EQ(mx.valueAt(2, 1), 10);
 	ASSERT_EQ(mx.realValueAt(1, 3), 0);
+}
+
+TEST(MatrixTest, RowAndColGetters) {
+	vector _data
+	{
+		5., 8., 5., .1,
+		10., 5., 1., 0.
+	};
+	Matrix2D mx = Matrix2D(&_data, 2, 4);
+
+	vector row_1_repr = { 5., 8., 5., .1 };
+	vector col_1_repr = { 5., 10. };
+	ASSERT_TRUE(row_1_repr == mx.getRow(1) and row_1_repr == mx.getRealRow(0));
+	ASSERT_TRUE(col_1_repr == mx.getColumn(1) and col_1_repr == mx.getRealColumn(0));
 }
