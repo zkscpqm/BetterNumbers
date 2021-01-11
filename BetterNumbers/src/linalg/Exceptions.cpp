@@ -53,8 +53,10 @@ public:
 
     explicit
         matrixSizeError(Matrix2D& mx1, Matrix2D& mx2){
-        auto [_mx1_rows, _mx1_cols] = mx1.shape();
-        auto [_mx2_rows, _mx2_cols] = mx2.shape();
+        _mx1_rows = mx1.numRows();
+        _mx1_cols = mx1.numCols();
+        _mx2_rows = mx2.numRows();
+        _mx2_cols = mx2.numCols();
     }
 
     virtual const char* what() const throw() {
@@ -80,7 +82,8 @@ public:
 
     explicit
         matrixOutOfRange(Matrix2D& mx, unsigned short row, unsigned short col) {
-        auto [_mx_rows, _mx_cols] = mx.shape();
+        _mx_rows = mx.numRows();
+        _mx_cols = mx.numCols();
         _row = row;
         _col = col;
     }

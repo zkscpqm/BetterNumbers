@@ -28,32 +28,35 @@ public:
 
 	// Properties
 
-	unsigned short size(); // Number of elements
-	unsigned short numCols(); // Number of columns
-	unsigned short numRows(); // Number of rows
-	vector rows();
-	vector* getData();
-	nvector getNestedData();
-	vector copyData();
-	std::tuple<unsigned short, unsigned short> shape(); // tuple (num rows, num cols)
-	bool isSquare(); // Whether the number of rows is the same as the number of columns
-	bool isDiagonal(); // Whether everything except the diagonal starting in upper left corner is all 0.0
-	bool isIdentity(); // Whether the diagonal starting is upper left corner is all 1.0 and the rest of the matrix is 0.0
-	bool isZeros(); // Whether tha matrix is comprised of all 0.0s
+	const unsigned short size() const; // Number of elements
+	const unsigned short numCols() const; // Number of columns
+	const unsigned short numRows() const; // Number of rows
+	const vector* getData() const; // Returns a reference to the Matrix data as a vector 
+	const nvector getNestedData() const; // Returns a reference to the Matrix data as a nested vector 
+	const vector copyData() const; // Returns a copy of the Matrix data as a vector 
+	const bool isSquare() const; // Whether the number of rows is the same as the number of columns
+	const bool isDiagonal() const; // Whether everything except the diagonal starting in upper left corner is all 0.0
+	const bool isIdentity() const; // Whether the diagonal starting is upper left corner is all 1.0 and the rest of the matrix is 0.0
+	const bool isZeros() const; // Whether tha matrix is comprised of all 0.0s
 
 	// Operations
 
 	Matrix2D operator+(Matrix2D& m2); // Matrix addition. Same size matrices required
 	Matrix2D operator-(Matrix2D& m2); // Matrix subtraction. Same size matrices required
 	Matrix2D operator*(double& scalar); // Matrix scalar multiplication
+	bool operator==(const Matrix2D& other) const; // Matrix equality
 	void transpose(); // Transpose matrix rows and columns
 	void reshape(unsigned short rows, unsigned short columns); // Reshape matrix (2D -> different shape 2D)
 	double valueAt(unsigned short row, unsigned short column); // Get value at row and column using algebraic notation (first row/col = 1)
 	double realValueAt(unsigned short row_index, unsigned short column_index); // Get value at row and column using array notation (first row/col = 0)
-	vector getRow(unsigned short row_number); // Get array representing a row using algebraic notation (first row = 1)
-	vector getRealRow(unsigned short row_index); // Get array representing a row using array notation (first row = 0)
-	vector getColumn(unsigned short column_number); // Get array representing a column using algebraic notation (first col = 1)
-	vector getRealColumn(unsigned short column_idx); // Get array representing a column using array notation (first col = 0)
+	const vector getRow(unsigned short row_number) const; // Get array representing a row using algebraic notation (first row = 1)
+	const vector getRealRow(unsigned short row_index) const; // Get array representing a row using array notation (first row = 0)
+	const vector getColumn(unsigned short column_number) const; // Get array representing a column using algebraic notation (first col = 1)
+	const vector getRealColumn(unsigned short column_idx) const; // Get array representing a column using array notation (first col = 0)
+
+	// Extras
+
+	void print(); // Prints the matrix
 
 private:
 	unsigned short __rows;
@@ -62,7 +65,7 @@ private:
 
 	// Checks
 
-	static bool areValidParams(vector* data, unsigned short rows, unsigned short cols);
+	static bool areValidParams(vector data, unsigned short rows, unsigned short cols);
 	static bool areValidParams(nvector* data);
 	bool isSameShapeAs(Matrix2D& __mx);
 	bool isValidReshape(unsigned short rows, unsigned short columns);
