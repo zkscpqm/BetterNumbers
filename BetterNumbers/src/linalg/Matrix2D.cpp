@@ -232,7 +232,7 @@ const vector Matrix2D::getRow(unsigned short row_number) const {
 }
 
 const vector Matrix2D::getRealRow(unsigned short row_index) const {
-	if (0 <= row_index and row_index < __rows - 1) {
+	if (0 <= row_index and row_index < __rows) {
 		unsigned short idx = row_index * __cols;
 		unsigned short end_idx = idx + __cols;
 		vector row;
@@ -253,7 +253,7 @@ const vector Matrix2D::getColumn(unsigned short column_number) const {
 }
 
 const vector Matrix2D::getRealColumn(unsigned short column_idx) const {
-	if (0 <= column_idx and column_idx < __cols - 1) {
+	if (0 <= column_idx and column_idx < __cols) {
 		vector col;
 		col.reserve(__rows);
 		for (unsigned short i = column_idx; i < size(); i += __cols) {

@@ -21,7 +21,6 @@ TEST(MatrixTest, NestedInit) {
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. }
 	};
-
 	Matrix2D mx = Matrix2D(&data); // FIX FAIL
 	ASSERT_EQ(data.size(), mx.numRows());
 	ASSERT_EQ(data.at(0).size(), mx.numCols());
