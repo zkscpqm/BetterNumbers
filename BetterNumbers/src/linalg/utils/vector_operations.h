@@ -13,22 +13,24 @@ class BN_API VectorUtils
 {
 public:
 
-	static void print_vector(vector& vec);
+	static void print(vector& vec);
+	static void print(nvector& vec);
 
-	static void scale_vector_in_place(vector& vec, double scalar);
-	static vector scale_vector(vector& vec, double scalar);
+	static void scaleInPlace(vector& vec, double scalar);
+	static vector scale(vector& vec, double scalar);
 
-	static double vector_maginitude(vector& vec);
-	static double dot_product_magnitude(vector& vec1, vector& vec2, bool absolute);
-	static double vector_dot_product(vector& vec1, vector& vec2);
+	static double magnitude(vector& vec);
+	static double dotProductMagnitude(vector& vec1, vector& vec2, bool absolute); // Test later
+	static double dotProduct(vector& vec1, vector& vec2);
 
-	static nvector vector_outer_product(vector& vec1, vector& vec2);
-	static vector vector_hadavard_product(vector& vec1, vector& vec2);
-	static vector vector_cross_product(vector& vec1, vector& vec2);
+	static nvector outerProduct(vector& vec1, vector& vec2);
+	static vector hadavardProduct(vector& vec1, vector& vec2);
+	static void hadavardProductInPlace(vector& vec1, vector& vec2);
+	static vector crossProduct(vector& vec1, vector& vec2);
 
-	static bool vector_is_zeros(vector& vec);
+	static bool isZeros(vector& vec);
 
-	static double vector_unit_scalar(vector& vec);
-	static void vector_to_unit_in_place(vector& vec);
-	static vector vector_to_unit(vector& vec);
+	static double getUnitScalar(vector& vec);
+	static void toUnitInPlace(vector& vec);
+	static vector toUnit(vector& vec);
 };

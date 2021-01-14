@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-void VectorUtils::print_vector(vector& vec) {
+void VectorUtils::print(vector& vec) {
 	std::cout << "[ ";
 	for (double element: vec) { 
 		std::cout << element << " ";
@@ -13,23 +13,32 @@ void VectorUtils::print_vector(vector& vec) {
 	std::cout << "]";
 }
 
-void VectorUtils::scale_vector_in_place(vector& vec, double scalar) {
+void VectorUtils::print(nvector& vec) {
+	std::cout << "[ ";
+	for (vector row : vec) {
+		print(row);
+	}
+	std::cout << "]";
+}
+
+void VectorUtils::scaleInPlace(vector& vec, double scalar) {
 	for (int i = 0; i < vec.size(); i++) {
 		vec[i] *= scalar;
 	}
 }
 
-vector VectorUtils::scale_vector(vector& vec, double scalar) {
+vector VectorUtils::scale(vector& vec, double scalar) {
 	int v1size = vec.size();
 	vector result;
 	result.reserve(v1size);
 	for (int i = 0; i < v1size; i++) {
-		result.emplace_back(vec[i] *= scalar);
+		double element = vec[i];
+		result.emplace_back(element *= scalar);
 	}
 	return result;
 }
 
-double VectorUtils::vector_maginitude(vector& vec) {
+double VectorUtils::magnitude(vector& vec) {
 	double sum = 0;
 	for (double element : vec) {
 		sum += std::pow(element, 2);
@@ -37,9 +46,9 @@ double VectorUtils::vector_maginitude(vector& vec) {
 	return std::pow(sum, .5);
 }
 
-double VectorUtils::dot_product_magnitude(vector& vec1, vector& vec2, bool absolute) {
+double VectorUtils::dotProductMagnitude(vector& vec1, vector& vec2, bool absolute) {
 	double dpm = 0;
-	for (double element : vector_hadavard_product(vec1, vec2)) {
+	for (double element : hadavardProduct(vec1, vec2)) {
 		dpm += element;
 	}
 	if (!absolute) {
@@ -48,18 +57,20 @@ double VectorUtils::dot_product_magnitude(vector& vec1, vector& vec2, bool absol
 	return abs(dpm);
 }
 
-double VectorUtils::vector_dot_product(vector& vec1, vector& vec2) {
+double VectorUtils::dotProduct(vector& vec1, vector& vec2) {
 	int v1size = vec1.size();
 	if (v1size == vec2.size()) {
 		double result = 0;
 		for (int i = 0; i < v1size; i++) {
-			result += vec1[i] * vec2[i];
+			double elem1 = vec1[i];
+			double elem2 = vec2[i];
+			result += elem1 * elem2;
 		}
 		return result;
 	}
 }
 
-nvector VectorUtils::vector_outer_product(vector& vec1, vector& vec2) {
+nvector VectorUtils::outerProduct(vector& vec1, vector& vec2) {
 	nvector result;
 	result.reserve(vec1.size());
 	for (double v1_elem : vec1) {
@@ -73,19 +84,30 @@ nvector VectorUtils::vector_outer_product(vector& vec1, vector& vec2) {
 	return result;
 }
 
-vector VectorUtils::vector_hadavard_product(vector& vec1, vector& vec2) {
+vector VectorUtils::hadavardProduct(vector& vec1, vector& vec2) {
 	int v1size = vec1.size();
 	if (v1size == vec2.size()) {
 		vector result;
 		result.reserve(v1size);
 		for (int i = 0; i < v1size; i++) {
-			result.emplace_back(vec1[i] * vec2[i]);
+			double elem1 = vec1[i];
+			double elem2 = vec2[i];
+			result.emplace_back(elem1 * elem2);
 		}
 		return result;
 	}
 }
 
-vector VectorUtils::vector_cross_product(vector& vec1, vector& vec2) {
+void VectorUtils::hadavardProductInPlace(vector& vec1, vector& vec2) {
+	int v1size = vec1.size();
+	if (v1size == vec2.size()) {
+		for (int i = 0; i < v1size; i++) {
+			vec1[i] *= vec2[i];
+		}
+	}
+}
+
+vector VectorUtils::crossProduct(vector& vec1, vector& vec2) {
 	if (vec1.size() == 3 and vec1.size() == vec2.size()) {
 		vector ret{
 			vec1[1] * vec2[2] - vec1[2] * vec2[1],
@@ -96,7 +118,7 @@ vector VectorUtils::vector_cross_product(vector& vec1, vector& vec2) {
 	}
 }
 
-bool VectorUtils::vector_is_zeros(vector& vec) {
+bool VectorUtils::isZeros(vector& vec) {
 	for (double elem : vec) {
 		if (elem != 0.) {
 			return false;
@@ -105,18 +127,18 @@ bool VectorUtils::vector_is_zeros(vector& vec) {
 	return true;
 }
 
-double VectorUtils::vector_unit_scalar(vector& vec) {
-	if (!vector_is_zeros(vec)) {
-		return 1 / vector_maginitude(vec);
+double VectorUtils::getUnitScalar(vector& vec) {
+	if (!isZeros(vec)) {
+		return 1 / magnitude(vec);
 	}
 }
 
-void VectorUtils::vector_to_unit_in_place(vector& vec) {
-	double mu = vector_unit_scalar(vec);
-	scale_vector_in_place(vec, mu);
+void VectorUtils::toUnitInPlace(vector& vec) {
+	double mu = getUnitScalar(vec);
+	scaleInPlace(vec, mu);
 }
 
-vector VectorUtils::vector_to_unit(vector& vec) {
-	double mu = vector_unit_scalar(vec);
-	return scale_vector(vec, mu);
+vector VectorUtils::toUnit(vector& vec) {
+	double mu = getUnitScalar(vec);
+	return scale(vec, mu);
 }

@@ -58,7 +58,7 @@ public:
 
 	void print(); // Prints the matrix
 
-private:
+private: // Todo: Eventually write unit tests for the private methods
 	unsigned short __rows;
 	unsigned short __cols;
 	vector __data;

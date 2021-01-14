@@ -1,9 +1,9 @@
 #include <vector>
-#include "..\..\BetterNumbers\BetterNumbers.h"
+#include "..\..\BetterNumbers\src\linalg\Matrix2D.h"
 #include "gtest/gtest.h"
 
 
-TEST(MatrixTest, BasicInit) {
+TEST(Matrix, BasicInit) {
 	vector data{ 1., 2., 3., 4., 5., 6. };
 	int rows = 2;
 	int cols = 3;
@@ -15,7 +15,7 @@ TEST(MatrixTest, BasicInit) {
 	ASSERT_EQ(data, *mx.getData());
 }
 
-TEST(MatrixTest, NestedInit) {
+TEST(Matrix, NestedInit) {
 	nvector data{
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. },
@@ -27,7 +27,7 @@ TEST(MatrixTest, NestedInit) {
 	ASSERT_EQ(data, mx.getNestedData());
 }
 
-TEST(MatrixTest, ZerosInitSquare) {
+TEST(Matrix, ZerosInitSquare) {
 	unsigned short _size = 3;
 	Matrix2D mx = Matrix2D::zeros(_size);
 	ASSERT_EQ(_size, mx.numRows());
@@ -36,7 +36,7 @@ TEST(MatrixTest, ZerosInitSquare) {
 	ASSERT_EQ(data, *mx.getData());
 }
 
-TEST(MatrixTest, ZerosInitRectangular) {
+TEST(Matrix, ZerosInitRectangular) {
 
 	int rows = 2;
 	int cols = 3;
@@ -48,7 +48,7 @@ TEST(MatrixTest, ZerosInitRectangular) {
 	ASSERT_EQ(data, *mx.getData());
 }
 
-TEST(MatrixTest, IdentityInit) {
+TEST(Matrix, IdentityInit) {
 	unsigned short _size = 3;
 	Matrix2D mx = Matrix2D::identity(_size);
 	ASSERT_EQ(_size, mx.numRows());
@@ -63,7 +63,7 @@ TEST(MatrixTest, IdentityInit) {
 	ASSERT_TRUE(mx.isIdentity());
 }
 
-TEST(MatrixTest, DiagonalInit) {
+TEST(Matrix, DiagonalInit) {
 	vector diag{ 1., 2., 3. };
 	Matrix2D mx = Matrix2D::diagonal(diag);
 	ASSERT_EQ(diag.size(), mx.numRows());
@@ -78,7 +78,7 @@ TEST(MatrixTest, DiagonalInit) {
 	ASSERT_TRUE(mx.isDiagonal());
 }
 
-TEST(MatrixTest, Operators) {
+TEST(Matrix, Operators) {
 	vector data_1
 	{
 		1., 0., 1.,
@@ -114,7 +114,7 @@ TEST(MatrixTest, Operators) {
 	ASSERT_TRUE(mx_subbed2.isZeros());
 }
 
-TEST(MatrixTest, Reshaping) {
+TEST(Matrix, Reshaping) {
 	vector _data
 	{
 		5., 8., 5., .1,
@@ -128,7 +128,7 @@ TEST(MatrixTest, Reshaping) {
 	ASSERT_TRUE(mx.numRows() == 8 and mx.numCols() == 1);
 }
 
-TEST(MatrixTest, ValueGetters) {
+TEST(Matrix, ValueGetters) {
 	vector _data
 	{
 		5., 8., 5., .1,
@@ -139,7 +139,7 @@ TEST(MatrixTest, ValueGetters) {
 	ASSERT_EQ(mx.realValueAt(1, 3), 0);
 }
 
-TEST(MatrixTest, RowAndColGetters) {
+TEST(Matrix, RowAndColGetters) {
 	vector _data
 	{
 		5., 8., 5., .1,
