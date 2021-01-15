@@ -128,10 +128,16 @@ TEST(Matrix, Reshaping) {
 		5., 1.,
 		.1, 0.
 	};
-
+	vector _expected_data_2
+	{
+		5., 8., 5., .1,
+		10., 5., 1., 0.
+	};
 	mx.transpose();
 	ASSERT_EQ(mx.copyData(), _expected_data);
 	ASSERT_TRUE(mx.numRows() == 4 and mx.numCols() == 2);
+	mx.transpose();
+	ASSERT_EQ(mx.copyData(), _expected_data_2);
 	mx.reshape(8, 1);
 	ASSERT_TRUE(mx.numRows() == 8 and mx.numCols() == 1);
 }
