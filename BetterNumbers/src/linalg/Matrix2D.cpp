@@ -98,7 +98,7 @@ const nvector Matrix2D::getNestedData() const {
 }
 
 const vector Matrix2D::copyData() const {
-	std::vector<double> data = __data;
+	std::vector data = __data;
 	return data;
 }
 
@@ -203,15 +203,46 @@ inline bool Matrix2D::operator==(const Matrix2D& other) const {
 }
 
 void Matrix2D::transpose() {
-	unsigned short _tmp = __rows;
-	__rows = __cols;
-	__cols = _tmp;
+	vector* result = new vector;
+	result->resize(size());
+	result->at(0) = __data[0];
+	int base_idx = 0;
+	int prev = NULL;
+	for (int i = 1; i < size(); i++) {
+		
+		int curr_idx = i - 1;
+		if (prev != NULL) {
+			curr_idx = prev;
+		}
+		int new_idx = nextIdx(curr_idx, base_idx);
+		result->at(new_idx) = __data[i];
+		prev = new_idx;
+		if (curr_idx + __rows >= size()) {
+			base_idx += 1;
+		}
+	}
+	__data = *result;
+	reshape(__cols, __rows);
+}
+
+int Matrix2D::nextIdx(int current_idx, int last_base) {
+	if (current_idx + __rows >= size()) {
+		return last_base + 1;
+	}
+	return current_idx + __rows;
 }
 
 void Matrix2D::reshape(unsigned short rows, unsigned short columns) {
 	if (isValidReshape(rows, columns)) {
 		__rows = rows;
 		__cols = columns;
+	}
+}
+
+Matrix2D Matrix2D::shift(double coeff) {
+	if (isSquare()) {
+		Matrix2D shiftMX = identity(__rows) * coeff;
+		return *this + shiftMX;
 	}
 }
 

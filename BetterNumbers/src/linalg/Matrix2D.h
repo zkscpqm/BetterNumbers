@@ -47,6 +47,7 @@ public:
 	bool operator==(const Matrix2D& other) const; // Matrix equality
 	void transpose(); // Transpose matrix rows and columns
 	void reshape(unsigned short rows, unsigned short columns); // Reshape matrix (2D -> different shape 2D)
+	Matrix2D shift(double coeff);
 	double valueAt(unsigned short row, unsigned short column); // Get value at row and column using algebraic notation (first row/col = 1)
 	double realValueAt(unsigned short row_index, unsigned short column_index); // Get value at row and column using array notation (first row/col = 0)
 	const vector getRow(unsigned short row_number) const; // Get array representing a row using algebraic notation (first row = 1)
@@ -73,4 +74,5 @@ private: // Todo: Eventually write unit tests for the private methods
 	// Helpers
 
 	void expandNestedVector(nvector& data);
+	int nextIdx(int current_idx, int last_base);
 };

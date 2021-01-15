@@ -21,7 +21,7 @@ TEST(Matrix, NestedInit) {
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. }
 	};
-	Matrix2D mx = Matrix2D(&data); // FIX FAIL
+	Matrix2D mx = Matrix2D(&data);
 	ASSERT_EQ(data.size(), mx.numRows());
 	ASSERT_EQ(data.at(0).size(), mx.numCols());
 	ASSERT_EQ(data, mx.getNestedData());
@@ -121,11 +121,37 @@ TEST(Matrix, Reshaping) {
 		10., 5., 1., 0.
 	};
 	Matrix2D mx = Matrix2D(&_data, 2, 4);
+	vector _expected_data
+	{
+		5., 10.,
+		8., 5.,
+		5., 1.,
+		.1, 0.
+	};
 
 	mx.transpose();
+	ASSERT_EQ(mx.copyData(), _expected_data);
 	ASSERT_TRUE(mx.numRows() == 4 and mx.numCols() == 2);
 	mx.reshape(8, 1);
 	ASSERT_TRUE(mx.numRows() == 8 and mx.numCols() == 1);
+}
+
+TEST(Matrix, Shift) {
+	vector _data
+	{
+		5., 8., 5., 
+		.1, 10., 5.,
+		1., 0., 1.
+	};
+	Matrix2D mx = Matrix2D(&_data, 3, 3);
+	Matrix2D mx2 = mx.shift(3);
+	vector _expected_data
+	{
+		8., 8., 5.,
+		.1, 13., 5.,
+		1., 0., 4.
+	};
+	ASSERT_EQ(*mx2.getData(), _expected_data);
 }
 
 TEST(Matrix, ValueGetters) {
