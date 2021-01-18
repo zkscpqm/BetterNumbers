@@ -3,6 +3,7 @@
 #include "Matrix2D.h"
 #include "Exceptions.cpp"
 #include "iostream"
+#include "utils/vector_operations.h"
 
 static unsigned long long previous_;
 static unsigned long long current_;
@@ -148,6 +149,23 @@ const bool Matrix2D::isZeros() const {
 		}
 	}
 	return true;
+}
+
+const vector Matrix2D::getDiagonal() const {
+	int elems = fmin(__rows, __cols);
+	vector diag;
+	diag.reserve(elems);
+	for (int i = 0, j = 0; i < elems; i++, j += __cols + 1) {
+		diag.emplace_back(__data[j]);
+	}
+	return diag;
+}
+
+const double Matrix2D::getTrace() const {
+	if (isSquare()) {
+		vector _diag = getDiagonal();
+		return VectorUtils::sum(_diag);
+	}
 }
 
 // OPERATIONS

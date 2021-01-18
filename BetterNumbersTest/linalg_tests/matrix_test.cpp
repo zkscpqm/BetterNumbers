@@ -184,3 +184,54 @@ TEST(Matrix, RowAndColGetters) {
 	ASSERT_TRUE(row_1_repr == mx.getRow(1) and row_1_repr == mx.getRealRow(0));
 	ASSERT_TRUE(col_1_repr == mx.getColumn(1) and col_1_repr == mx.getRealColumn(0));
 }
+
+TEST(Matrix, Diagonal) {
+	vector _data
+	{
+		5., 8., 5., .1, 9., 2.,
+		10., 5., 1., 0., 5.5, 0.
+	};
+	Matrix2D mx = Matrix2D(&_data, 2, 6);
+	vector expected = vector{ 5., 5. };
+	ASSERT_EQ(mx.getDiagonal(), expected);
+	mx.reshape(4, 3);
+	vector expected2 = vector{ 5., 9., 1. };
+	ASSERT_EQ(mx.getDiagonal(), expected2);
+}
+
+TEST(Matrix, Trace) {
+	vector _data
+	{
+		5., 8., 5., 
+		.1, 9., 2.,
+		10., 5., 1.
+	};
+	Matrix2D mx = Matrix2D(&_data, 3, 3);
+	ASSERT_EQ(mx.getTrace(), 15.);
+}
+
+TEST(Matrix, TraceLinearity) {
+	// Is the matrix trace linear (aka closed under addition + scalar multiplication)
+	vector _data1
+	{
+		9., 3., 4.,
+		.1, 4., 2.,
+		0., 0., 2.
+	};
+	Matrix2D mx1 = Matrix2D(&_data1, 3, 3);
+
+	vector _data2
+	{
+		5., 8., 5.,
+		.1, 9., 2.,
+		10., 5., 1.
+	};
+	Matrix2D mx2 = Matrix2D(&_data2, 3, 3);
+
+	// trace(A) + trace(B) == trace(A + B)
+	ASSERT_EQ(mx1.getTrace() + mx2.getTrace(), (mx1 + mx2).getTrace());
+	
+	// scalar * trace(A) == trace(scalar * A)
+	double scalar = 3.2;
+	ASSERT_EQ(scalar * (mx1.getTrace()), (mx1 * scalar).getTrace());
+}

@@ -57,6 +57,14 @@ double VectorUtils::dotProductMagnitude(vector& vec1, vector& vec2, bool absolut
 	return abs(dpm);
 }
 
+double VectorUtils::sum(vector& vec) {
+	double _sum = 0.;
+	for (double elem : vec) {
+		_sum += elem;
+	}
+	return _sum;
+}
+
 double VectorUtils::dotProduct(vector& vec1, vector& vec2) {
 	int v1size = vec1.size();
 	if (v1size == vec2.size()) {

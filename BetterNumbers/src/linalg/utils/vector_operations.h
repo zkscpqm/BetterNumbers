@@ -23,6 +23,7 @@ public:
 	static double dotProductMagnitude(vector& vec1, vector& vec2, bool absolute); // Test later
 	static double dotProduct(vector& vec1, vector& vec2);
 
+	static double sum(vector& vec1);
 	static nvector outerProduct(vector& vec1, vector& vec2);
 	static vector hadavardProduct(vector& vec1, vector& vec2);
 	static void hadavardProductInPlace(vector& vec1, vector& vec2);

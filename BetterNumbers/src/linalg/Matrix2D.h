@@ -38,6 +38,9 @@ public:
 	const bool isDiagonal() const; // Whether everything except the diagonal starting in upper left corner is all 0.0
 	const bool isIdentity() const; // Whether the diagonal starting is upper left corner is all 1.0 and the rest of the matrix is 0.0
 	const bool isZeros() const; // Whether tha matrix is comprised of all 0.0s
+	const vector getDiagonal() const; // Get array representing the diagonal of the matrix
+	const double getTrace() const; // Compute the trace of the square matrix
+
 
 	// Operations
 
@@ -47,13 +50,14 @@ public:
 	bool operator==(const Matrix2D& other) const; // Matrix equality
 	void transpose(); // Transpose matrix rows and columns
 	void reshape(unsigned short rows, unsigned short columns); // Reshape matrix (2D -> different shape 2D)
-	Matrix2D shift(double coeff);
+	Matrix2D shift(double coeff); // Add a scaled identity matrix to this matrix
 	double valueAt(unsigned short row, unsigned short column); // Get value at row and column using algebraic notation (first row/col = 1)
 	double realValueAt(unsigned short row_index, unsigned short column_index); // Get value at row and column using array notation (first row/col = 0)
 	const vector getRow(unsigned short row_number) const; // Get array representing a row using algebraic notation (first row = 1)
 	const vector getRealRow(unsigned short row_index) const; // Get array representing a row using array notation (first row = 0)
 	const vector getColumn(unsigned short column_number) const; // Get array representing a column using algebraic notation (first col = 1)
 	const vector getRealColumn(unsigned short column_idx) const; // Get array representing a column using array notation (first col = 0)
+	
 
 	// Extras
 
