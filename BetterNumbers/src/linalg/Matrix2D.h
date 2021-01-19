@@ -57,6 +57,8 @@ public:
 	const vector getRealRow(unsigned short row_index) const; // Get array representing a row using array notation (first row = 0)
 	const vector getColumn(unsigned short column_number) const; // Get array representing a column using algebraic notation (first col = 1)
 	const vector getRealColumn(unsigned short column_idx) const; // Get array representing a column using array notation (first col = 0)
+	Matrix2D addVerticalBroadcast(vector& vec, bool in_place=false);
+	Matrix2D addHorizontalBroadcast(vector& vec, bool in_place = false);
 	
 
 	// Extras

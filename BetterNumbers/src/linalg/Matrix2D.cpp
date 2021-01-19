@@ -315,6 +315,73 @@ const vector Matrix2D::getRealColumn(unsigned short column_idx) const {
 	}
 }
 
+Matrix2D Matrix2D::addVerticalBroadcast(vector& vec, bool in_place = false) {
+	if (vec.size() == __rows) {
+		int matrix_idx_crawler = 0;
+		int matrix_column_counter = 0;
+		int vector_idx_crawler = 0;
+		if (!in_place) {
+			vector* new_data = new vector;
+			new_data->reserve(size());
+			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+				new_data->emplace_back(__data[matrix_idx_crawler] + vec[vector_idx_crawler]);
+				if (matrix_column_counter == __cols - 1) {
+					matrix_column_counter = 0;
+					vector_idx_crawler++;
+				}
+				else {
+					matrix_column_counter++;
+				}
+			}
+			return Matrix2D(new_data, __rows, __cols);
+		}
+		else {
+			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+				__data[matrix_idx_crawler] += vec[vector_idx_crawler];
+				if (matrix_column_counter == __cols - 1) {
+					matrix_column_counter = 0;
+					vector_idx_crawler++;
+				}
+				else {
+					matrix_column_counter++;
+				}
+			}
+		}
+	}
+}
+
+Matrix2D Matrix2D::addHorizontalBroadcast(vector& vec, bool in_place = false) {
+	if (vec.size() == __cols) {
+		int matrix_idx_crawler = 0;
+		int vector_idx_crawler = 0;
+		if (!in_place) {
+			vector* new_data = new vector;
+			new_data->reserve(size());
+			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+				new_data->emplace_back(__data[matrix_idx_crawler] + vec[vector_idx_crawler]);
+				if (vector_idx_crawler == __cols - 1) {
+					vector_idx_crawler = 0;
+				}
+				else {
+					vector_idx_crawler++;
+				}
+			}
+			return Matrix2D(new_data, __rows, __cols);
+		}
+		else {
+			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+				__data[matrix_idx_crawler] += vec[vector_idx_crawler];
+				if (vector_idx_crawler == __cols - 1) {
+					vector_idx_crawler = 0;
+				}
+				else {
+					vector_idx_crawler++;
+				}
+			}
+		}
+	}
+}
+
 // CHECKS
 
 bool Matrix2D::areValidParams(vector data, unsigned short rows, unsigned short cols) {
@@ -344,7 +411,7 @@ bool Matrix2D::isValidReshape(unsigned short rows, unsigned short columns) {
 // HELPERS
 
 void Matrix2D::expandNestedVector(nvector &data) {
-	__cols = data.at(0).size();
+	__cols = data[0].size();
 	__data.reserve(data.size() * __cols);
 	for (vector row : data) {
 		__data.insert(__data.end(), row.begin(), row.end());
