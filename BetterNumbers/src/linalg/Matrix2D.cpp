@@ -315,7 +315,7 @@ const vector Matrix2D::getRealColumn(unsigned short column_idx) const {
 	}
 }
 
-Matrix2D Matrix2D::addVerticalBroadcast(vector& vec, bool in_place = false) {
+Matrix2D Matrix2D::verticalBroadcastAddition(vector& vec, bool in_place) {
 	if (vec.size() == __rows) {
 		int matrix_idx_crawler = 0;
 		int matrix_column_counter = 0;
@@ -350,7 +350,7 @@ Matrix2D Matrix2D::addVerticalBroadcast(vector& vec, bool in_place = false) {
 	}
 }
 
-Matrix2D Matrix2D::addHorizontalBroadcast(vector& vec, bool in_place = false) {
+Matrix2D Matrix2D::horizontalBroadcastAddition(vector& vec, bool in_place) {
 	if (vec.size() == __cols) {
 		int matrix_idx_crawler = 0;
 		int vector_idx_crawler = 0;
@@ -370,6 +370,7 @@ Matrix2D Matrix2D::addHorizontalBroadcast(vector& vec, bool in_place = false) {
 		}
 		else {
 			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+				std::cout << matrix_idx_crawler << " " << vector_idx_crawler << "\n";
 				__data[matrix_idx_crawler] += vec[vector_idx_crawler];
 				if (vector_idx_crawler == __cols - 1) {
 					vector_idx_crawler = 0;
@@ -390,7 +391,7 @@ bool Matrix2D::areValidParams(vector data, unsigned short rows, unsigned short c
 
 bool Matrix2D::areValidParams(nvector *data) {
 	int __colSize = data->at(0).size();
-	for (vector col : (*data)) {
+	for (vector col : *data) {
 		if (col.size() != __colSize) {
 			return false;
 		}

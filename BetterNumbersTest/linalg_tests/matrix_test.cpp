@@ -235,3 +235,25 @@ TEST(Matrix, TraceLinearity) {
 	double scalar = 3.2;
 	ASSERT_EQ(scalar * (mx1.getTrace()), (mx1 * scalar).getTrace());
 }
+
+TEST(Matrix, BroadcastAddition) {
+	vector _data
+	{
+		9., 3., 4.,
+		.1, 4., 2.,
+		0., 0., 2.
+	};
+	Matrix2D mx = Matrix2D(&_data, 3, 3);
+	vector vec{5., 6., 1.};
+
+	vector expected
+	{
+		14., 9., 5.,
+		5.1, 10., 3.,
+		5., 6., 3.
+	};
+	Matrix2D actual = mx.horizontalBroadcastAddition(vec);
+	ASSERT_EQ(expected, actual.copyData());
+	mx.horizontalBroadcastAddition(vec, true);
+	ASSERT_EQ(expected, mx.copyData());
+}
