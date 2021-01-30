@@ -379,6 +379,7 @@ Matrix2D Matrix2D::horizontalBroadcastAddition(vector& vec, bool in_place) {
 					vector_idx_crawler++;
 				}
 			}
+			return *this;
 		}
 	}
 }
