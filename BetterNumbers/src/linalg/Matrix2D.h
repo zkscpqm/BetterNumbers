@@ -15,36 +15,36 @@ public:
 
 	// Constructors
 
-	Matrix2D(vector* data, int rows, int cols);
+	Matrix2D(vector* data, unsigned short rows, unsigned short cols);
 	Matrix2D(nvector* data);
 
 	// Create a rows * cols matrix of all 0.0 values
-	static Matrix2D zeros(int rows, int cols);
+	static Matrix2D zeros(unsigned short rows, unsigned short cols);
 
 	// Create a square _l * _l matrix of all 0.0 values
-	static Matrix2D zeros(int _l);
+	static Matrix2D zeros(unsigned short _l);
 
 	// Creates a 0.0 square matrix with the diagonal starting is upper left corner being all 1.0
-	static Matrix2D identity(int _l);
+	static Matrix2D identity(unsigned short _l);
 
 	// Creates a square diagonal matrix with the provided vector being the diagonal
 	static Matrix2D diagonal(vector& _diag);
 
 	// Creates a long or tall diagonal matrix
-	static Matrix2D diagonal(vector _diag, int _l, bool tall);
+	static Matrix2D diagonal(vector _diag, unsigned short _l, bool tall);
 
 	~Matrix2D();
 
 	// Properties
 
 	// Number of elements
-	const int size() const;
+	const unsigned short size() const;
 
 	// Number of columns
-	const int numCols() const;
+	const unsigned short numCols() const;
 
 	// Number of rows
-	const int numRows() const;
+	const unsigned short numRows() const;
 
 	// Returns a reference to the Matrix data as a vector 
 	const vector* getData() const;
@@ -99,28 +99,28 @@ public:
 	void transpose();
 
 	// Reshape matrix (2D -> different shape 2D)
-	void reshape(int rows, int columns);
+	void reshape(unsigned short rows, unsigned short columns);
 
 	// Add a scaled identity matrix to this matrix
 	Matrix2D shift(double coeff);
 
 	// Get value at row and column using algebraic notation (first row/col = 1)
-	double valueAt(int row, int column);
+	double valueAt(unsigned short row, unsigned short column);
 
 	// Get value at row and column using array notation (first row/col = 0)
-	double realValueAt(int row_index, int column_index);
+	double realValueAt(unsigned short row_index, unsigned short column_index);
 	
 	// Get array representing a row using algebraic notation (first row = 1)
-	const vector getRow(int row_number) const;
+	const vector getRow(unsigned short row_number) const;
 	
 	// Get array representing a row using array notation (first row = 0)
-	const vector getRealRow(int row_index) const;
+	const vector getRealRow(unsigned short row_index) const;
 	
 	// Get array representing a column using algebraic notation (first col = 1)
-	const vector getColumn(int column_number) const;
+	const vector getColumn(unsigned short column_number) const;
 	
 	// Get array representing a column using array notation (first col = 0)
-	const vector getRealColumn(int column_idx) const;
+	const vector getRealColumn(unsigned short column_idx) const;
 	
 	// Broadcasts an n-size array on every row of an n*m matrix m times
 	Matrix2D verticalBroadcastAddition(vector& vec, bool in_place=false);
@@ -136,20 +136,20 @@ public:
 	void print();
 
 private: // Todo: Eventually write unit tests for the private methods
-	int __rows;
-	int __cols;
+	unsigned short __rows;
+	unsigned short __cols;
 	vector* __data;
 
 
 	// Checks
 
 
-	static bool areValidParams(vector* data, int rows, int cols);
+	static bool areValidParams(vector* data, unsigned short rows, unsigned short cols);
 	static bool areValidParams(nvector* data);
 	bool isSameShapeAs(Matrix2D& __mx);
 
 	// Can the data support the proposed rows/cols provided
-	bool isValidReshape(int rows, int columns);
+	bool isValidReshape(unsigned short rows, unsigned short columns);
 
 
 	// Helpers
