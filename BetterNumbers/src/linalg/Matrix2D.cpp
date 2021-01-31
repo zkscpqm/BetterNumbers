@@ -11,7 +11,7 @@ static unsigned index_;
 
 // CONSTRUCTORS
 
-Matrix2D::Matrix2D(vector *data, unsigned short rows, unsigned short cols) {
+Matrix2D::Matrix2D(vector *data, int rows, int cols) {
 
 	if (areValidParams(data, rows, cols)) {
 		__rows = rows;
@@ -35,27 +35,27 @@ Matrix2D::Matrix2D(nvector *data) {
 	}
 }
 
-Matrix2D Matrix2D::zeros(unsigned short _l) {
+Matrix2D Matrix2D::zeros(int _l) {
 	return zeros(_l, _l);
 }
 
-Matrix2D Matrix2D::zeros(unsigned short rows, unsigned short cols) {
+Matrix2D Matrix2D::zeros(int rows, int cols) {
 	vector* __d = new vector(rows * cols, 0.0);
 	return Matrix2D(__d, rows, cols);
 }
 
-Matrix2D Matrix2D::identity(unsigned short _l) {
+Matrix2D Matrix2D::identity(int _l) {
 	vector tmpvec(_l, 1.);
 	return diagonal(tmpvec);
 }
 
 Matrix2D Matrix2D::diagonal(vector& _diag) {
 	vector* data = new vector;
-	unsigned short _l = _diag.size();
-	unsigned short arr_size =  _l * _l;
+	int _l = _diag.size();
+	int arr_size =  _l * _l;
 	data->reserve(arr_size);
-	unsigned short diag_idx = 0;
-	unsigned short val_arr_idx = 0;
+	int diag_idx = 0;
+	int val_arr_idx = 0;
 	for (unsigned i = 0; i < arr_size; i++) {
 		if (i == diag_idx) {
 			data->emplace_back(_diag[val_arr_idx]);
@@ -71,16 +71,16 @@ Matrix2D Matrix2D::diagonal(vector& _diag) {
 
 // PROPERTIES
 
-const unsigned short Matrix2D::size() const {
+const int Matrix2D::size() const {
 
 	return __data->size();
 }
 
-const unsigned short Matrix2D::numRows() const {
+const int Matrix2D::numRows() const {
 	return __rows;
 }
 
-const unsigned short Matrix2D::numCols() const {
+const int Matrix2D::numCols() const {
 	return __cols;
 }
 
@@ -107,7 +107,7 @@ const bool Matrix2D::isSquare() const {
 }
 
 const bool Matrix2D::isDiagonal() const {
-	unsigned short coeff = 0;
+	int coeff = 0;
 	for (int i = 0; i < size(); i++) {
 		if (i != coeff) {
 			if (__data->at(i) != 0.) {
@@ -122,7 +122,7 @@ const bool Matrix2D::isDiagonal() const {
 }
 const bool Matrix2D::isIdentity() const {
 	if (isSquare()) {
-		unsigned short coeff = 0;
+		int coeff = 0;
 		for (int i = 0; i < size(); i++) {
 			if (i != coeff) {
 				if (__data->at(i) != 0.) {
@@ -171,10 +171,9 @@ const double Matrix2D::getTrace() const {
 
 Matrix2D Matrix2D::operator+(Matrix2D& m2) {
 
-	vector* result = new vector;
-	result->reserve(size());
-
 	if (isSameShapeAs(m2)) {
+		vector* result = new vector;
+		result->reserve(size());
 		for (int i = 0; i < size(); i++) {
 			result->emplace_back(__data->at(i) + m2.__data->at(i));
 		}
@@ -188,10 +187,9 @@ Matrix2D Matrix2D::operator+(Matrix2D& m2) {
 
 Matrix2D Matrix2D::operator-(Matrix2D& m2) {
 
-	vector* result = new vector;
-	result->reserve(size());
-
 	if (isSameShapeAs(m2)) {
+		vector* result = new vector;
+		result->reserve(size());
 		for (int i = 0; i < size(); i++) {
 			result->emplace_back(__data->at(i) - m2.__data->at(i));
 		}
@@ -211,6 +209,31 @@ Matrix2D Matrix2D::operator*(double& scalar) {
 		result->emplace_back(__data->at(i) * scalar);
 	}
 	return Matrix2D(result, __rows, __cols);
+}
+
+Matrix2D Matrix2D::operator*(Matrix2D& m2) {
+	if (__cols == m2.__rows) {
+		vector* result = new vector;
+		result->reserve(__rows * m2.__cols);
+
+		// Todo: write
+
+	}
+}
+
+Matrix2D Matrix2D::hadavardMultiplication(Matrix2D& m2) {
+	if (isSameShapeAs(m2)) {
+		vector* result = new vector;
+		result->reserve(size());
+		for (int i = 0; i < size(); i++) {
+			result->emplace_back(__data->at(i) * m2.__data->at(i));
+		}
+		return Matrix2D(result, __rows, __cols);
+	}
+	else {
+		throw matrixSizeError(*this, m2);
+	}
+	return nullptr;
 }
 
 inline bool Matrix2D::operator==(const Matrix2D& other) const {
@@ -249,7 +272,7 @@ int Matrix2D::nextIdx(int current_idx, int last_base) {
 	return current_idx + __rows;
 }
 
-void Matrix2D::reshape(unsigned short rows, unsigned short columns) {
+void Matrix2D::reshape(int rows, int columns) {
 	if (isValidReshape(rows, columns)) {
 		__rows = rows;
 		__cols = columns;
@@ -263,11 +286,11 @@ Matrix2D Matrix2D::shift(double coeff) {
 	}
 }
 
-double Matrix2D::valueAt(unsigned short row, unsigned short column) {
+double Matrix2D::valueAt(int row, int column) {
 	return realValueAt(row - 1, column - 1);
 }
 
-double Matrix2D::realValueAt(unsigned short row_index, unsigned short column_index) {
+double Matrix2D::realValueAt(int row_index, int column_index) {
 	if (row_index < __rows and column_index < __cols) {
 		unsigned idx = (row_index * __cols) + column_index;
 		return __data->at(idx);
@@ -275,14 +298,14 @@ double Matrix2D::realValueAt(unsigned short row_index, unsigned short column_ind
 	throw matrixOutOfRange(*this, row_index, column_index);
 }
 
-const vector Matrix2D::getRow(unsigned short row_number) const {
+const vector Matrix2D::getRow(int row_number) const {
 	return getRealRow(row_number - 1);
 }
 
-const vector Matrix2D::getRealRow(unsigned short row_index) const {
+const vector Matrix2D::getRealRow(int row_index) const {
 	if (0 <= row_index and row_index < __rows) {
-		unsigned short idx = row_index * __cols;
-		unsigned short end_idx = idx + __cols;
+		int idx = row_index * __cols;
+		int end_idx = idx + __cols;
 		vector row;
 		row.reserve(__cols);
 		for (; idx < end_idx; idx++) {
@@ -295,16 +318,16 @@ const vector Matrix2D::getRealRow(unsigned short row_index) const {
 	}
 }
 
-const vector Matrix2D::getColumn(unsigned short column_number) const {
+const vector Matrix2D::getColumn(int column_number) const {
 	return getRealColumn(column_number - 1);
 
 }
 
-const vector Matrix2D::getRealColumn(unsigned short column_idx) const {
+const vector Matrix2D::getRealColumn(int column_idx) const {
 	if (0 <= column_idx and column_idx < __cols) {
 		vector col;
 		col.reserve(__rows);
-		for (unsigned short i = column_idx; i < size(); i += __cols) {
+		for (int i = column_idx; i < size(); i += __cols) {
 			col.emplace_back(__data->at(i));
 		}
 		return col;
@@ -385,7 +408,7 @@ Matrix2D Matrix2D::horizontalBroadcastAddition(vector& vec, bool in_place) {
 
 // CHECKS
 
-bool Matrix2D::areValidParams(vector* data, unsigned short rows, unsigned short cols) {
+bool Matrix2D::areValidParams(vector* data, int rows, int cols) {
 	return (rows > 0) && (cols > 0) && (data->size() == rows * cols);
 }
 
@@ -405,7 +428,7 @@ bool Matrix2D::isSameShapeAs(Matrix2D& mx) {
 		and (__rows == mx.__rows);
 }
 
-bool Matrix2D::isValidReshape(unsigned short rows, unsigned short columns) {
+bool Matrix2D::isValidReshape(int rows, int columns) {
 	return rows * columns == size();
 }
 
