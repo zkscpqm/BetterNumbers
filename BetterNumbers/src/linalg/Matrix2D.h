@@ -132,13 +132,13 @@ public:
 private: // Todo: Eventually write unit tests for the private methods
 	unsigned short __rows;
 	unsigned short __cols;
-	vector __data;
+	vector* __data;
 
 
 	// Checks
 
 
-	static bool areValidParams(vector data, unsigned short rows, unsigned short cols);
+	static bool areValidParams(vector* data, unsigned short rows, unsigned short cols);
 	static bool areValidParams(nvector* data);
 	bool isSameShapeAs(Matrix2D& __mx);
 
@@ -150,7 +150,7 @@ private: // Todo: Eventually write unit tests for the private methods
 
 
 	// Exapands a nested vector into a single vector
-	void expandNestedVector(nvector& data);
+	void expandNestedVector(nvector* data);
 
 	int nextIdx(int current_idx, int last_base);
 };

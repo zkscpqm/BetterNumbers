@@ -16,15 +16,15 @@ TEST(Matrix, BasicInit) {
 }
 
 TEST(Matrix, NestedInit) {
-	nvector data{
+	nvector* data = new nvector{
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. }
 	};
-	Matrix2D mx = Matrix2D(&data);
-	ASSERT_EQ(data.size(), mx.numRows());
-	ASSERT_EQ(data.at(0).size(), mx.numCols());
-	ASSERT_EQ(data, mx.getNestedData());
+	Matrix2D mx = Matrix2D(data);
+	ASSERT_EQ(data->size(), mx.numRows());
+	ASSERT_EQ(data->at(0).size(), mx.numCols());
+	ASSERT_EQ(*data, mx.getNestedData());
 }
 
 TEST(Matrix, ZerosInitSquare) {
@@ -79,29 +79,29 @@ TEST(Matrix, DiagonalInit) {
 }
 
 TEST(Matrix, Operators) {
-	vector data_1
+	vector* data_1 = new vector
 	{
 		1., 0., 1.,
 		2., 1., 0.,
 		3., 4., 1.
 	};
-	Matrix2D mx1 = Matrix2D(&data_1, 3, 3);
+	Matrix2D mx1 = Matrix2D(data_1, 3, 3);
 
-	vector data_2
+	vector* data_2 = new vector
 	{
 		4., 0., 4.,
 		8., 4., 0.,
 		12., 16., 4.
 	};
-	Matrix2D mx2 = Matrix2D(&data_2, 3, 3);
+	Matrix2D mx2 = Matrix2D(data_2, 3, 3);
 
-	vector data_final
+	vector* data_final = new vector
 	{
 		5., 0., 5.,
 		10., 5., 0.,
 		15., 20., 5.
 	};
-	Matrix2D mx_final = Matrix2D(&data_final, 3, 3);
+	Matrix2D mx_final = Matrix2D(data_final, 3, 3);
 
 	double scalar = 5.;
 	Matrix2D mx_mul = mx1 * scalar;
