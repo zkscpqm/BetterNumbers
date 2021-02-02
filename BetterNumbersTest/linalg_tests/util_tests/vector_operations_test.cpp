@@ -7,9 +7,10 @@ TEST(Vector, Scale) {
 	vector vec{ 2., 3., 5. };
 	double scalar = 3.;
 	vector expected{ 6., 9., 15. };
-	ASSERT_EQ(VectorUtils::scale(vec, scalar), expected);
 
-	VectorUtils::scaleInPlace(vec, scalar);
+	vector* res = VectorUtils::scale(&vec, scalar, false);
+	ASSERT_EQ(&res, expected);
+	VectorUtils::scale(&vec, scalar, true);
 	ASSERT_EQ(vec, expected);
 }
 

@@ -19,10 +19,7 @@ Matrix2D::Matrix2D(vector *data, unsigned short rows, unsigned short cols) {
 		__data = data;
 
 	}
-	else {
-		throw matrixInitializationException(*data, rows, cols);
-	}
-
+	else throw matrixInvalidParametersException(data, rows, cols);
 }
 
 Matrix2D::Matrix2D(nvector *data) {
@@ -30,9 +27,7 @@ Matrix2D::Matrix2D(nvector *data) {
 		expandNestedVector(data);
 		__rows = data->size();
 	}
-	else {
-		throw matrixInitializationException(*data);
-	}
+	else throw matrixInvalidParametersException(data);
 }
 
 Matrix2D Matrix2D::zeros(unsigned short _l) {
@@ -165,6 +160,7 @@ const double Matrix2D::getTrace() const {
 		vector _diag = getDiagonal();
 		return VectorUtils::sum(_diag);
 	}
+	else throw matrixInvalidShapeException("square");
 }
 
 // OPERATIONS
@@ -179,10 +175,7 @@ Matrix2D Matrix2D::operator+(Matrix2D& m2) {
 		}
 		return Matrix2D(result, __rows, __cols);
 	}
-	else {
-		throw matrixSizeError(*this, m2);
-	}
-	return nullptr;
+	else throw matrixSizeError(this, &m2);
 }
 
 Matrix2D Matrix2D::operator-(Matrix2D& m2) {
@@ -195,10 +188,7 @@ Matrix2D Matrix2D::operator-(Matrix2D& m2) {
 		}
 		return Matrix2D(result, __rows, __cols);
 	}
-	else {
-		throw matrixSizeError(*this, m2);
-	}
-	return nullptr;
+	else throw matrixSizeError(this, &m2);
 }
 
 Matrix2D Matrix2D::operator*(double& scalar) {
@@ -213,27 +203,40 @@ Matrix2D Matrix2D::operator*(double& scalar) {
 
 Matrix2D Matrix2D::operator*(Matrix2D& m2) {
 	if (__cols == m2.__rows) {
+		int mSize = __rows * m2.__cols;
 		vector* result = new vector;
-		result->reserve(__rows * m2.__cols);
-
-		// Todo: write
-
+		result->reserve(mSize); 
+		
+		for (int row_idx = 0; row_idx < __rows; row_idx++) {
+			vector* row = getRealRow(row_idx);
+			for (int col_idx = 0; col_idx < m2.__rows; col_idx++) {
+				vector* col = m2.getRealColumn(col_idx);
+				double _elem = 0.;
+				for (int i = 0; i < row->size(); i++) {
+					_elem += row->at(i) * col->at(i);
+				}
+				result->emplace_back(_elem);
+			}
+		}
+		return Matrix2D(result, __rows, m2.__cols);
 	}
+	else throw matrixInvalidShapeException("Left matrix columns matching right matrix rows");
 }
 
-Matrix2D Matrix2D::hadavardMultiplication(Matrix2D& m2) {
+Matrix2D* Matrix2D::hadavardMultiplication(Matrix2D& m2, bool in_place) {
 	if (isSameShapeAs(m2)) {
 		vector* result = new vector;
 		result->reserve(size());
 		for (int i = 0; i < size(); i++) {
 			result->emplace_back(__data->at(i) * m2.__data->at(i));
 		}
-		return Matrix2D(result, __rows, __cols);
+		if (in_place) {
+			__data = result;
+			return this;
+		}
+		else return new Matrix2D(result, __rows, __cols);
 	}
-	else {
-		throw matrixSizeError(*this, m2);
-	}
-	return nullptr;
+	else throw matrixSizeError(this, &m2);
 }
 
 inline bool Matrix2D::operator==(const Matrix2D& other) const {
@@ -242,7 +245,7 @@ inline bool Matrix2D::operator==(const Matrix2D& other) const {
 		and (__rows == other.__rows);
 }
 
-void Matrix2D::transpose() {
+Matrix2D* Matrix2D::transpose(bool in_place) {
 	vector* result = new vector;
 	result->resize(size());
 	result->at(0) = __data->at(0);
@@ -254,36 +257,52 @@ void Matrix2D::transpose() {
 		if (prev != NULL) {
 			curr_idx = prev;
 		}
-		int new_idx = nextIdx(curr_idx, base_idx);
+		int new_idx = _nextIdx(curr_idx, base_idx);
 		result->at(new_idx) = __data->at(i);
 		prev = new_idx;
 		if (curr_idx + __rows >= size()) {
 			base_idx += 1;
 		}
 	}
-	__data = result;
-	reshape(__cols, __rows);
+	if (in_place) {
+		__data = result;
+		reshape(__cols, __rows);
+		return this;
+	}
+	else return new Matrix2D(result, __cols, __rows);
+
 }
 
-int Matrix2D::nextIdx(int current_idx, int last_base) {
+int Matrix2D::_nextIdx(int current_idx, int last_base) {
 	if (current_idx + __rows >= size()) {
 		return last_base + 1;
 	}
 	return current_idx + __rows;
 }
 
-void Matrix2D::reshape(unsigned short rows, unsigned short columns) {
+Matrix2D* Matrix2D::reshape(unsigned short rows, unsigned short columns, bool in_place) {
 	if (isValidReshape(rows, columns)) {
-		__rows = rows;
-		__cols = columns;
+		if (in_place) {
+			__rows = rows;
+			__cols = columns;
+			return this;
+		}
+		return new Matrix2D(__data, rows, columns);
 	}
+	else throw matrixInvalidParametersException(__data, rows, columns);
 }
 
-Matrix2D Matrix2D::shift(double coeff) {
+Matrix2D* Matrix2D::shift(double coeff, bool in_place) {
 	if (isSquare()) {
 		Matrix2D shiftMX = identity(__rows) * coeff;
-		return *this + shiftMX;
+		vector* d = VectorUtils::elementwiseAddition(*__data, *shiftMX.__data);
+		if (in_place) {
+			__data = d;
+			return this;
+		}
+		else return new Matrix2D(d, __rows, __cols);
 	}
+	else throw matrixInvalidShapeException("square");
 }
 
 double Matrix2D::valueAt(unsigned short row, unsigned short column) {
@@ -295,115 +314,90 @@ double Matrix2D::realValueAt(unsigned short row_index, unsigned short column_ind
 		unsigned idx = (row_index * __cols) + column_index;
 		return __data->at(idx);
 	}
-	throw matrixOutOfRange(*this, row_index, column_index);
+	throw matrixOutOfRangeException(this, row_index, column_index);
 }
 
-const vector Matrix2D::getRow(unsigned short row_number) const {
+vector* Matrix2D::getRow(unsigned short row_number) const {
 	return getRealRow(row_number - 1);
 }
 
-const vector Matrix2D::getRealRow(unsigned short row_index) const {
+vector* Matrix2D::getRealRow(unsigned short row_index) const {
 	if (0 <= row_index and row_index < __rows) {
 		unsigned short idx = row_index * __cols;
 		unsigned short end_idx = idx + __cols;
-		vector row;
-		row.reserve(__cols);
+		vector* row = new vector;
+		row->reserve(__cols);
 		for (; idx < end_idx; idx++) {
-			row.emplace_back(__data->at(idx));
+			row->emplace_back(__data->at(idx));
 		}
 		return row;
 	}
-	else {
-		throw;
-	}
+	else throw matrixOutOfRangeException(this);
 }
 
-const vector Matrix2D::getColumn(unsigned short column_number) const {
+vector* Matrix2D::getColumn(unsigned short column_number) const {
 	return getRealColumn(column_number - 1);
 
 }
 
-const vector Matrix2D::getRealColumn(unsigned short column_idx) const {
+vector* Matrix2D::getRealColumn(unsigned short column_idx) const {
 	if (0 <= column_idx and column_idx < __cols) {
-		vector col;
-		col.reserve(__rows);
+		vector* col = new vector;
+		col->reserve(__rows);
 		for (unsigned short i = column_idx; i < size(); i += __cols) {
-			col.emplace_back(__data->at(i));
+			col->emplace_back(__data->at(i));
 		}
 		return col;
 	}
-	else {
-		throw;
-	}
+	else throw matrixOutOfRangeException(this);
 }
 
-Matrix2D Matrix2D::verticalBroadcastAddition(vector& vec, bool in_place) {
+Matrix2D* Matrix2D::verticalBroadcastAddition(vector& vec, bool in_place) {
 	if (vec.size() == __rows) {
 		int matrix_idx_crawler = 0;
 		int matrix_column_counter = 0;
 		int vector_idx_crawler = 0;
-		if (!in_place) {
-			vector* new_data = new vector;
-			new_data->reserve(size());
-			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
-				new_data->emplace_back(__data->at(matrix_idx_crawler) + vec[vector_idx_crawler]);
-				if (matrix_column_counter == __cols - 1) {
-					matrix_column_counter = 0;
-					vector_idx_crawler++;
-				}
-				else {
-					matrix_column_counter++;
-				}
+		vector* new_data = new vector;
+		new_data->reserve(size());
+		for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+			new_data->emplace_back(__data->at(matrix_idx_crawler) + vec[vector_idx_crawler]);
+			if (matrix_column_counter == __cols - 1) {
+				matrix_column_counter = 0;
+				vector_idx_crawler++;
 			}
-			return Matrix2D(new_data, __rows, __cols);
+			else matrix_column_counter++;
 		}
-		else {
-			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
-				__data->at(matrix_idx_crawler) += vec[vector_idx_crawler];
-				if (matrix_column_counter == __cols - 1) {
-					matrix_column_counter = 0;
-					vector_idx_crawler++;
-				}
-				else {
-					matrix_column_counter++;
-				}
-			}
+		if (in_place) {
+			__data = new_data;
+			return this;
 		}
+		else return new Matrix2D(new_data, __rows, __cols);
 	}
+	else throw matrixInvalidShapeException("The vector must be the same size as the matrix rows");
 }
 
-Matrix2D Matrix2D::horizontalBroadcastAddition(vector& vec, bool in_place) {
+Matrix2D* Matrix2D::horizontalBroadcastAddition(vector& vec, bool in_place) {
 	if (vec.size() == __cols) {
 		int matrix_idx_crawler = 0;
 		int vector_idx_crawler = 0;
-		if (!in_place) {
-			vector* new_data = new vector;
-			new_data->reserve(size());
-			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
-				new_data->emplace_back(__data->at(matrix_idx_crawler) + vec[vector_idx_crawler]);
-				if (vector_idx_crawler == __cols - 1) {
-					vector_idx_crawler = 0;
-				}
-				else {
-					vector_idx_crawler++;
-				}
+		vector* new_data = new vector;
+		new_data->reserve(size());
+		for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
+			new_data->emplace_back(__data->at(matrix_idx_crawler) + vec[vector_idx_crawler]);
+			if (vector_idx_crawler == __cols - 1) {
+				vector_idx_crawler = 0;
 			}
-			return Matrix2D(new_data, __rows, __cols);
-		}
-		else {
-			for (; matrix_idx_crawler < size(); matrix_idx_crawler++) {
-				std::cout << matrix_idx_crawler << " " << vector_idx_crawler << "\n";
-				__data->at(matrix_idx_crawler) += vec[vector_idx_crawler];
-				if (vector_idx_crawler == __cols - 1) {
-					vector_idx_crawler = 0;
-				}
-				else {
-					vector_idx_crawler++;
-				}
+			else {
+				vector_idx_crawler++;
 			}
-			return *this;
 		}
+		if (in_place) {
+			__data = new_data;
+			return this;
+		}
+		else return new Matrix2D(new_data, __rows, __cols);
 	}
+	else throw matrixInvalidShapeException("The vector must be the same size as the matrix cols");
 }
 
 // CHECKS
@@ -415,9 +409,7 @@ bool Matrix2D::areValidParams(vector* data, unsigned short rows, unsigned short 
 bool Matrix2D::areValidParams(nvector *data) {
 	int __colSize = data->at(0).size();
 	for (vector col : *data) {
-		if (col.size() != __colSize) {
-			return false;
-		}
+		if (col.size() != __colSize) return false;
 	}
 	return true;
 }
@@ -460,4 +452,6 @@ void Matrix2D::print() {
 	}
 }
 
-Matrix2D::~Matrix2D() {}
+Matrix2D::~Matrix2D() {
+	delete __data;
+}

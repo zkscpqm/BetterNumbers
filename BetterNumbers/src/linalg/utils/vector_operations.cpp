@@ -21,21 +21,18 @@ void VectorUtils::print(nvector& vec) {
 	std::cout << "]";
 }
 
-void VectorUtils::scaleInPlace(vector& vec, double scalar) {
-	for (int i = 0; i < vec.size(); i++) {
-		vec[i] *= scalar;
-	}
-}
-
-vector VectorUtils::scale(vector& vec, double scalar) {
-	int v1size = vec.size();
-	vector result;
-	result.reserve(v1size);
+vector* VectorUtils::scale(vector* vec, double scalar, bool in_place) {
+	int v1size = vec->size();
+	vector* result = new vector;
+	result->reserve(v1size);
 	for (int i = 0; i < v1size; i++) {
-		double element = vec[i];
-		result.emplace_back(element *= scalar);
+		double element = vec->at(i);
+		result->emplace_back(element * scalar);
 	}
-	return result;
+	if (!in_place) return result;
+
+	vec = result;
+	return vec;
 }
 
 double VectorUtils::magnitude(vector& vec) {
@@ -48,13 +45,11 @@ double VectorUtils::magnitude(vector& vec) {
 
 double VectorUtils::dotProductMagnitude(vector& vec1, vector& vec2, bool absolute) {
 	double dpm = 0;
-	for (double element : hadavardProduct(vec1, vec2)) {
+	for (double element : *hadavardProduct(vec1, vec2)) {
 		dpm += element;
 	}
-	if (!absolute) {
-		return dpm;
-	}
-	return abs(dpm);
+	if (!absolute) return dpm;
+	else return abs(dpm);
 }
 
 double VectorUtils::sum(vector& vec) {
@@ -63,6 +58,19 @@ double VectorUtils::sum(vector& vec) {
 		_sum += elem;
 	}
 	return _sum;
+}
+
+vector* VectorUtils::elementwiseAddition(vector& vec1, vector& vec2) {
+	int v1size = vec1.size();
+	if (v1size == vec2.size()) {
+		vector* result = new vector;
+		result->reserve(v1size);
+		for (int i = 0; i < v1size; i++) {
+			result->emplace_back(vec1[i] + vec2[i]);
+		}
+		return result;
+	}
+	else throw; //Make exception
 }
 
 double VectorUtils::dotProduct(vector& vec1, vector& vec2) {
@@ -76,34 +84,34 @@ double VectorUtils::dotProduct(vector& vec1, vector& vec2) {
 		}
 		return result;
 	}
+	else throw;
 }
 
-nvector VectorUtils::outerProduct(vector& vec1, vector& vec2) {
-	nvector result;
-	result.reserve(vec1.size());
+nvector* VectorUtils::outerProduct(vector& vec1, vector& vec2) {
+	nvector* result = new nvector;
+	result->reserve(vec1.size());
 	for (double v1_elem : vec1) {
 		vector row;
 		row.reserve(vec2.size());
 		for (double v2_elem : vec2) {
 			row.emplace_back(v1_elem * v2_elem);
 		}
-		result.emplace_back(row);
+		result->emplace_back(row);
 	}
 	return result;
 }
 
-vector VectorUtils::hadavardProduct(vector& vec1, vector& vec2) {
+vector* VectorUtils::hadavardProduct(vector& vec1, vector& vec2) {
 	int v1size = vec1.size();
 	if (v1size == vec2.size()) {
-		vector result;
-		result.reserve(v1size);
+		vector* result = new vector;
+		result->reserve(v1size);
 		for (int i = 0; i < v1size; i++) {
-			double elem1 = vec1[i];
-			double elem2 = vec2[i];
-			result.emplace_back(elem1 * elem2);
+			result->emplace_back(vec1[i] * vec2[i]);
 		}
 		return result;
 	}
+	else throw;
 }
 
 void VectorUtils::hadavardProductInPlace(vector& vec1, vector& vec2) {
@@ -115,9 +123,9 @@ void VectorUtils::hadavardProductInPlace(vector& vec1, vector& vec2) {
 	}
 }
 
-vector VectorUtils::crossProduct(vector& vec1, vector& vec2) {
+vector* VectorUtils::crossProduct(vector& vec1, vector& vec2) {
 	if (vec1.size() == 3 and vec1.size() == vec2.size()) {
-		vector ret{
+		vector* ret = new vector{
 			vec1[1] * vec2[2] - vec1[2] * vec2[1],
 			vec1[2] * vec2[0] - vec1[0] * vec2[2],
 			vec1[0] * vec2[1] - vec1[1] * vec2[0]
@@ -141,12 +149,8 @@ double VectorUtils::getUnitScalar(vector& vec) {
 	}
 }
 
-void VectorUtils::toUnitInPlace(vector& vec) {
-	double mu = getUnitScalar(vec);
-	scaleInPlace(vec, mu);
-}
 
-vector VectorUtils::toUnit(vector& vec) {
+vector* VectorUtils::toUnit(vector& vec) {
 	double mu = getUnitScalar(vec);
-	return scale(vec, mu);
+	return scale(&vec, mu);
 }

@@ -49,7 +49,7 @@ public:
 	// Returns a reference to the Matrix data as a vector 
 	const vector* getData() const;
 
-	// Returns a reference to the Matrix data as a nested vector
+	// Returns a copy of the Matrix data as a nested vector
 	const nvector getNestedData() const; 
 
 	// Returns a copy of the Matrix data as a vector 
@@ -90,19 +90,19 @@ public:
 	Matrix2D operator*(Matrix2D& m2);
 
 	//Element-wise multiplication -> dims M^ij * N^ij is valid for resulting size R^ij
-	Matrix2D hadavardMultiplication(Matrix2D& m2);
+	Matrix2D* hadavardMultiplication(Matrix2D& m2, bool in_place=true);
 
 	// Matrix equality
 	bool operator==(const Matrix2D& other) const; 
 
 	// Transpose matrix rows and columns
-	void transpose();
+	Matrix2D* transpose(bool in_place=true);
 
 	// Reshape matrix (2D -> different shape 2D)
-	void reshape(unsigned short rows, unsigned short columns);
+	Matrix2D* reshape(unsigned short rows, unsigned short columns, bool in_place=true);
 
 	// Add a scaled identity matrix to this matrix
-	Matrix2D shift(double coeff);
+	Matrix2D* shift(double coeff, bool in_place=true);
 
 	// Get value at row and column using algebraic notation (first row/col = 1)
 	double valueAt(unsigned short row, unsigned short column);
@@ -111,22 +111,22 @@ public:
 	double realValueAt(unsigned short row_index, unsigned short column_index);
 	
 	// Get array representing a row using algebraic notation (first row = 1)
-	const vector getRow(unsigned short row_number) const;
+	vector* getRow(unsigned short row_number) const;
 	
 	// Get array representing a row using array notation (first row = 0)
-	const vector getRealRow(unsigned short row_index) const;
+	vector* getRealRow(unsigned short row_index) const;
 	
 	// Get array representing a column using algebraic notation (first col = 1)
-	const vector getColumn(unsigned short column_number) const;
+	vector* getColumn(unsigned short column_number) const;
 	
 	// Get array representing a column using array notation (first col = 0)
-	const vector getRealColumn(unsigned short column_idx) const;
+	vector* getRealColumn(unsigned short column_idx) const;
 	
 	// Broadcasts an n-size array on every row of an n*m matrix m times
-	Matrix2D verticalBroadcastAddition(vector& vec, bool in_place=false);
+	Matrix2D* verticalBroadcastAddition(vector& vec, bool in_place=false);
 	
 	// Broadcasts an m-size array on every column of an n*m matrix n times
-	Matrix2D horizontalBroadcastAddition(vector& vec, bool in_place = false);
+	Matrix2D* horizontalBroadcastAddition(vector& vec, bool in_place = false);
 	
 
 	// Extras
@@ -158,5 +158,5 @@ private: // Todo: Eventually write unit tests for the private methods
 	// Exapands a nested vector into a single vector
 	void expandNestedVector(nvector* data);
 
-	int nextIdx(int current_idx, int last_base);
+	int _nextIdx(int current_idx, int last_base);
 };
