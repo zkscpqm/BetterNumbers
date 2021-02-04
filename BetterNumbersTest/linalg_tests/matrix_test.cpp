@@ -150,14 +150,14 @@ TEST(Matrix, Shift) {
 		1., 0., 1.
 	};
 	Matrix2D mx = Matrix2D(&_data, 3, 3);
-	Matrix2D mx2 = mx.shift(3);
+	Matrix2D* mx2 = mx.shift(3);
 	vector _expected_data
 	{
 		8., 8., 5.,
 		.1, 13., 5.,
 		1., 0., 4.
 	};
-	ASSERT_EQ(*mx2.getData(), _expected_data);
+	ASSERT_EQ(mx2.getData(), _expected_data);
 }
 
 TEST(Matrix, ValueGetters) {
