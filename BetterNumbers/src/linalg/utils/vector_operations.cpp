@@ -107,7 +107,8 @@ VectorUtils::outerProduct(vector* vec1, vector* vec2) {
 	return result;
 }
 
-vector VectorUtils::hadavardProduct(vector* vec1, vector* vec2) {
+vector
+VectorUtils::hadavardProduct(vector* vec1, vector* vec2) {
 	int v1size = vec1->size();
 	if (v1size == vec2->size()) {
 		vector result = vector{ *vec1 };
@@ -117,7 +118,8 @@ vector VectorUtils::hadavardProduct(vector* vec1, vector* vec2) {
 	else throw;
 }
 
-vector* VectorUtils::hadavardProductInPlace(vector* vec1, vector* vec2) {
+vector*
+VectorUtils::hadavardProductInPlace(vector* vec1, vector* vec2) {
 	int v1size = vec1->size();
 	if (v1size == vec2->size()) {
 		for (int i = 0; i < v1size; i++) vec1->at(i) *= vec2->at(i);
@@ -126,7 +128,8 @@ vector* VectorUtils::hadavardProductInPlace(vector* vec1, vector* vec2) {
 	else throw;
 }
 
-vector VectorUtils::crossProduct(vector* vec1, vector* vec2) {
+vector
+VectorUtils::crossProduct(vector* vec1, vector* vec2) {
 	if (vec1->size() == 3 and vec1->size() == vec2->size()) {
 		return vector{
 			vec1->at(1) * vec2->at(2) - vec1->at(2) * vec2->at(1),
@@ -137,7 +140,8 @@ vector VectorUtils::crossProduct(vector* vec1, vector* vec2) {
 	else throw;
 }
 
-vector* VectorUtils::crossProductInPlace(vector* vec1, vector* vec2) {
+vector*
+VectorUtils::crossProductInPlace(vector* vec1, vector* vec2) {
 	if (vec1->size() == 3 and vec1->size() == vec2->size()) {
 		vec1->at(0) = vec1->at(1) * vec2->at(2) - vec1->at(2) * vec2->at(1);
 		vec1->at(1) = vec1->at(2) * vec2->at(0) - vec1->at(0) * vec2->at(2);
@@ -147,7 +151,8 @@ vector* VectorUtils::crossProductInPlace(vector* vec1, vector* vec2) {
 	else throw;
 }
 
-bool VectorUtils::isZeros(vector* vec) {
+bool
+VectorUtils::isZeros(vector* vec) {
 	for (double elem : *vec) {
 		if (elem != 0.) {
 			return false;
@@ -156,18 +161,21 @@ bool VectorUtils::isZeros(vector* vec) {
 	return true;
 }
 
-double VectorUtils::getUnitScalar(vector* vec) {
+double
+VectorUtils::getUnitScalar(vector* vec) {
 	if (!isZeros(vec)) {
 		return 1 / magnitude(vec);
 	}
 }
 
-vector VectorUtils::toUnit(vector* vec) {
+vector
+VectorUtils::toUnit(vector* vec) {
 	double mu = getUnitScalar(vec);
 	return scale(vec, mu);
 }
 
-vector* VectorUtils::toUnitInPlace(vector* vec) {
+vector*
+VectorUtils::toUnitInPlace(vector* vec) {
 	double mu = getUnitScalar(vec);
 	return scaleInPlace(vec, mu);
 }

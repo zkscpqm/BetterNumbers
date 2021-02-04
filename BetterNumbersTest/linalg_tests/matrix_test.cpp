@@ -16,15 +16,15 @@ TEST(Matrix, BasicInit) {
 }
 
 TEST(Matrix, NestedInit) {
-	nvector* data = new nvector{
+	nvector data{
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. },
 		{ 1., 2., 3., 4., 5., 6. }
 	};
-	Matrix2D mx = Matrix2D(data);
-	ASSERT_EQ(data->size(), mx.numRows());
-	ASSERT_EQ(data->at(0).size(), mx.numCols());
-	ASSERT_EQ(*data, mx.getNestedData());
+	Matrix2D mx = Matrix2D(&data);
+	ASSERT_EQ(data.size(), mx.numRows());
+	ASSERT_EQ(data[0].size(), mx.numCols());
+	ASSERT_EQ(data, mx.getNestedData());
 }
 
 TEST(Matrix, ZerosInitSquare) {
@@ -79,37 +79,41 @@ TEST(Matrix, DiagonalInit) {
 }
 
 TEST(Matrix, Operators) {
-	vector* data_1 = new vector
+	vector data_1
 	{
 		1., 0., 1.,
 		2., 1., 0.,
 		3., 4., 1.
 	};
-	Matrix2D mx1 = Matrix2D(data_1, 3, 3);
+	Matrix2D mx1 = Matrix2D(&data_1, 3, 3);
 
-	vector* data_2 = new vector
+	vector data_2=
 	{
 		4., 0., 4.,
 		8., 4., 0.,
 		12., 16., 4.
 	};
-	Matrix2D mx2 = Matrix2D(data_2, 3, 3);
+	Matrix2D mx2 = Matrix2D(&data_2, 3, 3);
 
-	vector* data_final = new vector
+	vector data_final
 	{
 		5., 0., 5.,
 		10., 5., 0.,
 		15., 20., 5.
 	};
-	Matrix2D mx_final = Matrix2D(data_final, 3, 3);
+	Matrix2D mx_final = Matrix2D(&data_final, 3, 3);
 
 	double scalar = 5.;
+
 	Matrix2D mx_mul = mx1 * scalar;
 	ASSERT_EQ(mx_mul, mx_final);
+
 	Matrix2D mx_added = mx1 + mx2;
 	ASSERT_EQ(mx_added, mx_final);
+
 	Matrix2D mx_subbed = mx_final - mx2;
 	ASSERT_TRUE(mx_subbed == mx1);
+
 	Matrix2D mx_subbed2 = mx_subbed - mx1;
 	ASSERT_TRUE(mx_subbed2.isZeros());
 }
@@ -121,6 +125,7 @@ TEST(Matrix, Reshaping) {
 		10., 5., 1., 0.
 	};
 	Matrix2D mx = Matrix2D(&_data, 2, 4);
+
 	vector _expected_data
 	{
 		5., 10.,
@@ -128,17 +133,21 @@ TEST(Matrix, Reshaping) {
 		5., 1.,
 		.1, 0.
 	};
+
 	vector _expected_data_2
 	{
 		5., 8., 5., .1,
 		10., 5., 1., 0.
 	};
-	mx.transpose();
+
+	mx.transposeInPlace();
 	ASSERT_EQ(mx.copyData(), _expected_data);
 	ASSERT_TRUE(mx.numRows() == 4 and mx.numCols() == 2);
-	mx.transpose();
+
+	mx = mx.transpose();
 	ASSERT_EQ(mx.copyData(), _expected_data_2);
-	mx.reshape(8, 1);
+
+	mx.reshapeInPlace(8, 1);
 	ASSERT_TRUE(mx.numRows() == 8 and mx.numCols() == 1);
 }
 
@@ -150,14 +159,16 @@ TEST(Matrix, Shift) {
 		1., 0., 1.
 	};
 	Matrix2D mx = Matrix2D(&_data, 3, 3);
-	Matrix2D* mx2 = mx.shift(3);
+
 	vector _expected_data
 	{
 		8., 8., 5.,
 		.1, 13., 5.,
 		1., 0., 4.
 	};
-	ASSERT_EQ(mx2.getData(), _expected_data);
+
+	mx.shiftInPlace(3);
+	ASSERT_EQ(mx.getData(), _expected_data);
 }
 
 TEST(Matrix, ValueGetters) {
@@ -167,6 +178,7 @@ TEST(Matrix, ValueGetters) {
 		10., 5., 1., 0.
 	};
 	Matrix2D mx = Matrix2D(&_data, 2, 4);
+
 	ASSERT_EQ(mx.valueAt(2, 1), 10);
 	ASSERT_EQ(mx.realValueAt(1, 3), 0);
 }
@@ -181,6 +193,7 @@ TEST(Matrix, RowAndColGetters) {
 
 	vector row_1_repr = { 5., 8., 5., .1 };
 	vector col_1_repr = { 5., 10. };
+
 	ASSERT_TRUE(row_1_repr == mx.getRow(1) and row_1_repr == mx.getRealRow(0));
 	ASSERT_TRUE(col_1_repr == mx.getColumn(1) and col_1_repr == mx.getRealColumn(0));
 }
@@ -192,10 +205,13 @@ TEST(Matrix, Diagonal) {
 		10., 5., 1., 0., 5.5, 0.
 	};
 	Matrix2D mx = Matrix2D(&_data, 2, 6);
+
 	vector expected = vector{ 5., 5. };
-	ASSERT_EQ(mx.getDiagonal(), expected);
-	mx.reshape(4, 3);
 	vector expected2 = vector{ 5., 9., 1. };
+
+	ASSERT_EQ(mx.getDiagonal(), expected);
+
+	mx.reshape(4, 3);
 	ASSERT_EQ(mx.getDiagonal(), expected2);
 }
 
@@ -252,8 +268,8 @@ TEST(Matrix, BroadcastAddition) {
 		5.1, 10., 3.,
 		5., 6., 3.
 	};
-	Matrix2D actual = mx.horizontalBroadcastAddition(vec);
+	Matrix2D actual = mx.horizontalBroadcastAddition(&vec);
 	ASSERT_EQ(expected, actual.copyData());
-	mx.horizontalBroadcastAddition(vec, true);
+	mx.horizontalBroadcastAdditionInPlace(&vec);
 	ASSERT_EQ(expected, mx.copyData());
 }

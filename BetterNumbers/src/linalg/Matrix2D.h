@@ -90,19 +90,31 @@ public:
 	Matrix2D operator*(Matrix2D& m2);
 
 	//Element-wise multiplication -> dims M^ij * N^ij is valid for resulting size R^ij
-	Matrix2D* hadavardMultiplication(Matrix2D& m2, bool in_place=true);
+	Matrix2D hadavardMultiplication(Matrix2D* m2);
+
+	//In-place element-wise multiplication -> dims M^ij * N^ij is valid for resulting size R^ij
+	Matrix2D* hadavardMultiplicationInPlace(Matrix2D* m2);
 
 	// Matrix equality
 	bool operator==(const Matrix2D& other) const; 
 
 	// Transpose matrix rows and columns
-	Matrix2D* transpose(bool in_place=true);
+	Matrix2D transpose();
+
+	// Transpose matrix rows and columns in place
+	Matrix2D* transposeInPlace();
 
 	// Reshape matrix (2D -> different shape 2D)
-	Matrix2D* reshape(unsigned short rows, unsigned short columns, bool in_place=true);
+	Matrix2D reshape(unsigned short rows, unsigned short columns);
+
+	// Reshape matrix (2D -> different shape 2D) in place
+	Matrix2D* reshapeInPlace(unsigned short rows, unsigned short columns);
 
 	// Add a scaled identity matrix to this matrix
-	Matrix2D* shift(double coeff, bool in_place=true);
+	Matrix2D shift(double coeff);
+
+	// Add a scaled identity matrix to this matrix in place
+	Matrix2D* shiftInPlace(double coeff);
 
 	// Get value at row and column using algebraic notation (first row/col = 1)
 	double valueAt(unsigned short row, unsigned short column);
@@ -111,22 +123,28 @@ public:
 	double realValueAt(unsigned short row_index, unsigned short column_index);
 	
 	// Get array representing a row using algebraic notation (first row = 1)
-	vector* getRow(unsigned short row_number) const;
+	vector getRow(unsigned short row_number) const;
 	
 	// Get array representing a row using array notation (first row = 0)
-	vector* getRealRow(unsigned short row_index) const;
+	vector getRealRow(unsigned short row_index) const;
 	
 	// Get array representing a column using algebraic notation (first col = 1)
-	vector* getColumn(unsigned short column_number) const;
+	vector getColumn(unsigned short column_number) const;
 	
 	// Get array representing a column using array notation (first col = 0)
-	vector* getRealColumn(unsigned short column_idx) const;
+	vector getRealColumn(unsigned short column_idx) const;
 	
 	// Broadcasts an n-size array on every row of an n*m matrix m times
-	Matrix2D* verticalBroadcastAddition(vector& vec, bool in_place=false);
+	Matrix2D verticalBroadcastAddition(vector* vec);
+
+	// Broadcasts an n-size array on every row of an n*m matrix m times in place
+	Matrix2D* verticalBroadcastAdditionInPlace(vector* vec);
 	
 	// Broadcasts an m-size array on every column of an n*m matrix n times
-	Matrix2D* horizontalBroadcastAddition(vector& vec, bool in_place = false);
+	Matrix2D horizontalBroadcastAddition(vector* vec);
+
+	// Broadcasts an m-size array on every column of an n*m matrix n times in place
+	Matrix2D* horizontalBroadcastAdditionInPlace(vector* vec);
 	
 
 	// Extras
