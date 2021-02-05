@@ -96,7 +96,9 @@ public:
 	Matrix2D* hadavardMultiplicationInPlace(Matrix2D* m2);
 
 	// Matrix equality
-	bool operator==(const Matrix2D& other) const; 
+	inline bool operator==(const Matrix2D& other) const; 
+
+	inline bool operator==(const Matrix2D* other) const;
 
 	// Transpose matrix rows and columns
 	Matrix2D transpose();

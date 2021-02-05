@@ -259,6 +259,13 @@ Matrix2D::operator==(const Matrix2D& other) const {
 		and (__rows == other.__rows);
 }
 
+inline bool
+Matrix2D::operator==(const Matrix2D* other) const {
+	return (*__data == *(other->__data))
+		and (__cols == other->__cols)
+		and (__rows == other->__rows);
+}
+
 Matrix2D
 Matrix2D::transpose() {
 	vector* result = new vector;
@@ -522,4 +529,4 @@ Matrix2D::print() {
 	}
 }
 
-Matrix2D::~Matrix2D() { delete __data; };
+Matrix2D::~Matrix2D() { delete[] __data; };
