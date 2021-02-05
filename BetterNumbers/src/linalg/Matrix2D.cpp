@@ -12,7 +12,6 @@ static unsigned index_;
 // CONSTRUCTORS
 
 Matrix2D::Matrix2D(vector *data, unsigned short rows, unsigned short cols) {
-
 	if (areValidParams(data, rows, cols)) {
 		__rows = rows;
 		__cols = cols;
@@ -58,9 +57,7 @@ Matrix2D::diagonal(vector& _diag) {
 			diag_idx += _l + 1;
 			val_arr_idx++;
 		}
-		else {
-			data->emplace_back(0.);
-		}
+		else data->emplace_back(0.);
 	}
 	return Matrix2D(data, _l, _l);
 }
@@ -69,7 +66,6 @@ Matrix2D::diagonal(vector& _diag) {
 
 const unsigned short
 Matrix2D::size() const {
-
 	return __data->size();
 }
 
@@ -136,8 +132,10 @@ Matrix2D::isIdentity() const {
 				if (__data->at(i) != 1.) return false;
 				coeff += __cols + 1;
 			}
-		} return true;
-	} return false;
+		} 
+		return true;
+	} 
+	return false;
 }
 
 const bool
@@ -171,7 +169,6 @@ Matrix2D::getTrace() const {
 
 Matrix2D
 Matrix2D::operator+(Matrix2D& m2) {
-
 	if (isSameShapeAs(m2)) {
 		vector* result = new vector{ *__data };
 		for (int i = 0; i < size(); i++) {
@@ -184,7 +181,6 @@ Matrix2D::operator+(Matrix2D& m2) {
 
 Matrix2D
 Matrix2D::operator-(Matrix2D& m2) {
-
 	if (isSameShapeAs(m2)) {
 		vector* result = new vector{ *__data };
 		for (int i = 0; i < size(); i++) {
@@ -197,7 +193,6 @@ Matrix2D::operator-(Matrix2D& m2) {
 
 Matrix2D
 Matrix2D::operator*(double& scalar) {
-
 	vector* result = new vector{ *__data };
 	for (int i = 0; i < size(); i++) {
 		result->at(i) *= scalar;
