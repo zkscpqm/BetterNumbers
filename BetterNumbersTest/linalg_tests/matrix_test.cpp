@@ -168,7 +168,7 @@ TEST(Matrix, Shift) {
 	};
 
 	mx.shiftInPlace(3);
-	ASSERT_EQ(mx.getData(), &_expected_data);
+	ASSERT_EQ(*mx.getData(), _expected_data);
 }
 
 TEST(Matrix, ValueGetters) {
@@ -211,7 +211,7 @@ TEST(Matrix, Diagonal) {
 
 	ASSERT_EQ(mx.getDiagonal(), expected);
 
-	mx.reshape(4, 3);
+	mx.reshapeInPlace(4, 3);
 	ASSERT_EQ(mx.getDiagonal(), expected2);
 }
 

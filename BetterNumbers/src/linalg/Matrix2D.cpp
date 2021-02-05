@@ -17,7 +17,6 @@ Matrix2D::Matrix2D(vector *data, unsigned short rows, unsigned short cols) {
 		__rows = rows;
 		__cols = cols;
 		__data = data;
-
 	}
 	else throw matrixInvalidParametersException(data, rows, cols);
 }
@@ -259,13 +258,6 @@ Matrix2D::operator==(const Matrix2D& other) const {
 		and (__rows == other.__rows);
 }
 
-inline bool
-Matrix2D::operator==(const Matrix2D* other) const {
-	return (*__data == *(other->__data))
-		and (__cols == other->__cols)
-		and (__rows == other->__rows);
-}
-
 Matrix2D
 Matrix2D::transpose() {
 	vector* result = new vector;
@@ -288,6 +280,9 @@ Matrix2D::transpose() {
 
 Matrix2D*
 Matrix2D::transposeInPlace() {
+	vector* result = new vector;
+	result->resize(size());
+	result->at(0) = __data->at(0);
 	int base_idx = 0;
 	int prev = NULL;
 	for (int i = 1; i < size(); i++) {
@@ -295,11 +290,13 @@ Matrix2D::transposeInPlace() {
 		if (prev != NULL) curr_idx = prev;
 
 		int new_idx = _nextIdx(curr_idx, base_idx);
-		__data->at(new_idx) = __data->at(i);
+		result->at(new_idx) = __data->at(i);
 		prev = new_idx;
 
 		if (curr_idx + __rows >= size()) base_idx += 1;
 	}
+	*__data = *result;
+	reshapeInPlace(__cols, __rows);
 	return this;
 }
 
@@ -529,4 +526,4 @@ Matrix2D::print() {
 	}
 }
 
-Matrix2D::~Matrix2D() { delete[] __data; };
+Matrix2D::~Matrix2D() {  };

@@ -98,8 +98,6 @@ public:
 	// Matrix equality
 	inline bool operator==(const Matrix2D& other) const; 
 
-	inline bool operator==(const Matrix2D* other) const;
-
 	// Transpose matrix rows and columns
 	Matrix2D transpose();
 
@@ -158,7 +156,7 @@ public:
 private: // Todo: Eventually write unit tests for the private methods
 	unsigned short __rows;
 	unsigned short __cols;
-	vector* __data;
+	vector* __data = new vector; // TODO: USE SMART POINTER!!
 
 
 	// Checks
